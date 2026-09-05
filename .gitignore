@@ -1,0 +1,26 @@
+# Build & Dependency Directories
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/build/
+
+# Databases & Logs
+*.db
+*.db-shm
+*.db-wal
+*.log
+**/order_notifications.log
+
+# IDE & OS Files
+.DS_Store
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Secrets & Local Overrides
+*.local
+appsettings.Production.json
