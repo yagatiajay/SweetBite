@@ -418,7 +418,7 @@ export default function CartDrawer() {
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div className="form-grid-2" style={{ gap: '0.75rem' }}>
                   <div>
                     <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
                       Email *
@@ -485,7 +485,7 @@ export default function CartDrawer() {
                   </div>
                 )}
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div className="form-grid-2" style={{ gap: '0.75rem' }}>
                   <div>
                     <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
                       {deliveryType === 'Delivery' ? 'Delivery Date *' : 'Pickup Date *'}

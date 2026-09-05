@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, Mail, MapPin, Phone, Clock, ArrowRight, Check } from 'lucide-react';
+import { Mail, MapPin, Phone, Clock, ArrowRight, Check } from 'lucide-react';
 
 const InstagramIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -25,18 +25,15 @@ export default function Footer() {
     <footer style={{
       backgroundColor: 'var(--color-cocoa-dark)',
       color: '#fdf7f5',
-      paddingTop: '5rem',
+      paddingTop: '4.5rem',
       paddingBottom: '2.5rem',
-      borderTop: '1px solid rgba(255, 255, 255, 0.08)'
+      borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+      width: '100%',
+      overflowX: 'hidden'
     }}>
       <div className="container">
         {/* Top Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-          gap: '3.5rem',
-          marginBottom: '4rem'
-        }}>
+        <div className="footer-top-grid">
           {/* Brand Col */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
@@ -49,7 +46,8 @@ export default function Footer() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: '1.2rem',
-                color: '#2a1810'
+                color: '#2a1810',
+                flexShrink: 0
               }}>
                 🧁
               </div>
@@ -117,27 +115,17 @@ export default function Footer() {
             <h4 style={{
               fontSize: '1.05rem',
               color: '#ffffff',
-              marginBottom: '1.25rem',
+              marginBottom: '1.15rem',
               fontWeight: 700
             }}>
               Explore Bakes
             </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.92rem', color: '#d6c4b8' }}>
-              <a href="#treats" style={{ transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'} onMouseLeave={(e) => e.currentTarget.style.color = '#d6c4b8'}>
-                Fudgy Brownies
-              </a>
-              <a href="#treats" style={{ transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'} onMouseLeave={(e) => e.currentTarget.style.color = '#d6c4b8'}>
-                Brown Butter Cookies
-              </a>
-              <a href="#treats" style={{ transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'} onMouseLeave={(e) => e.currentTarget.style.color = '#d6c4b8'}>
-                Celebration Cakes
-              </a>
-              <a href="#treats" style={{ transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'} onMouseLeave={(e) => e.currentTarget.style.color = '#d6c4b8'}>
-                Flaky Viennoiseries
-              </a>
-              <a href="#box-builder" style={{ transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'} onMouseLeave={(e) => e.currentTarget.style.color = '#d6c4b8'}>
-                Custom Treat Box
-              </a>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.9rem', color: '#d6c4b8' }}>
+              <a href="#treats" style={{ transition: 'color 0.2s' }}>Fudgy Brownies</a>
+              <a href="#treats" style={{ transition: 'color 0.2s' }}>Brown Butter Cookies</a>
+              <a href="#treats" style={{ transition: 'color 0.2s' }}>Celebration Cakes</a>
+              <a href="#treats" style={{ transition: 'color 0.2s' }}>Flaky Viennoiseries</a>
+              <a href="#box-builder" style={{ transition: 'color 0.2s' }}>Custom Treat Box</a>
             </div>
           </div>
 
@@ -146,22 +134,22 @@ export default function Footer() {
             <h4 style={{
               fontSize: '1.05rem',
               color: '#ffffff',
-              marginBottom: '1.25rem',
+              marginBottom: '1.15rem',
               fontWeight: 700
             }}>
               Bakery & Pickup
             </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.92rem', color: '#d6c4b8' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
-                <MapPin size={18} color="var(--color-caramel-gold)" style={{ flexShrink: 0, marginTop: '2px' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.9rem', color: '#d6c4b8' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                <MapPin size={17} color="var(--color-caramel-gold)" style={{ flexShrink: 0, marginTop: '2px' }} />
                 <span>124 Bakery Lane, San Francisco, CA 94107</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <Clock size={18} color="var(--color-caramel-gold)" style={{ flexShrink: 0 }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Clock size={17} color="var(--color-caramel-gold)" style={{ flexShrink: 0 }} />
                 <span>Mon – Sun: 8:00 AM – 9:00 PM</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <Phone size={18} color="var(--color-caramel-gold)" style={{ flexShrink: 0 }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Phone size={17} color="var(--color-caramel-gold)" style={{ flexShrink: 0 }} />
                 <span>+1 (555) 321-CAKE (2253)</span>
               </div>
             </div>
@@ -177,7 +165,7 @@ export default function Footer() {
             }}>
               Join the Sweet Club
             </h4>
-            <p style={{ fontSize: '0.88rem', color: '#d6c4b8', lineHeight: 1.5, marginBottom: '1.25rem' }}>
+            <p style={{ fontSize: '0.88rem', color: '#d6c4b8', lineHeight: 1.5, marginBottom: '1.15rem' }}>
               Subscribe for fresh weekend bake drops and enjoy <strong>10% off</strong> your first treat order.
             </p>
 
@@ -196,7 +184,7 @@ export default function Footer() {
                 <span>Welcome to the Sweet Club! Check your inbox.</span>
               </div>
             ) : (
-              <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: '0.5rem' }}>
+              <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: '0.4rem', width: '100%' }}>
                 <input
                   type="email"
                   required
@@ -211,6 +199,7 @@ export default function Footer() {
                     color: '#ffffff',
                     fontSize: '0.88rem',
                     flex: 1,
+                    minWidth: 0,
                     outline: 'none'
                   }}
                 />
@@ -237,21 +226,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div style={{
-          paddingTop: '2rem',
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '1rem',
-          fontSize: '0.82rem',
-          color: '#a89487'
-        }}>
+        <div className="footer-bottom-bar">
           <div>
-            © {new Date().getFullYear()} Sweet Bite Bakery. All rights reserved. Handcrafted with passion.
+            © {new Date().getFullYear()} Sweet Bite Bakery. All rights reserved.
           </div>
-          <div style={{ display: 'flex', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
             <a href="#" style={{ color: 'inherit' }}>Privacy Policy</a>
             <a href="#" style={{ color: 'inherit' }}>Terms of Service</a>
             <a href="#" style={{ color: 'inherit' }}>Cookie Preferences</a>

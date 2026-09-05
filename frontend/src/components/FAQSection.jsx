@@ -44,7 +44,7 @@ export default function FAQSection() {
           </p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
           {faqs.map((faq, idx) => {
             const isOpen = openIdx === idx;
             return (
@@ -64,39 +64,42 @@ export default function FAQSection() {
                   onClick={() => setOpenIdx(isOpen ? -1 : idx)}
                   style={{
                     width: '100%',
-                    padding: '1.25rem 1.5rem',
+                    padding: 'clamp(1rem, 3vw, 1.25rem) clamp(1rem, 3vw, 1.5rem)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     textAlign: 'left',
-                    gap: '1rem'
+                    gap: '0.75rem'
                   }}
+                  aria-expanded={isOpen}
                 >
                   <span style={{
-                    fontSize: '1.05rem',
+                    fontSize: 'clamp(0.95rem, 2.5vw, 1.05rem)',
                     fontWeight: 700,
                     color: isOpen ? 'var(--color-caramel-gold)' : 'var(--color-cocoa-dark)',
-                    transition: 'color 0.2s'
+                    transition: 'color 0.2s',
+                    lineHeight: 1.3
                   }}>
                     {faq.q}
                   </span>
                   <div style={{
                     transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                     transition: 'transform 0.3s ease',
-                    color: 'var(--color-cocoa-muted)'
+                    color: 'var(--color-cocoa-muted)',
+                    flexShrink: 0
                   }}>
-                    <ChevronDown size={20} />
+                    <ChevronDown size={18} />
                   </div>
                 </button>
 
                 {isOpen && (
                   <div style={{
-                    padding: '0 1.5rem 1.25rem',
+                    padding: '0 clamp(1rem, 3vw, 1.5rem) 1.15rem',
                     color: 'var(--color-cocoa-light)',
-                    fontSize: '0.95rem',
+                    fontSize: '0.92rem',
                     lineHeight: 1.65,
                     borderTop: '1px solid rgba(92, 56, 36, 0.05)',
-                    paddingTop: '0.75rem',
+                    paddingTop: '0.65rem',
                     animation: 'fadeIn 0.2s ease-out'
                   }}>
                     {faq.a}

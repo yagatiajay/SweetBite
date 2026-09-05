@@ -3,19 +3,14 @@ import { ArrowRight, Star, Sparkles, Award, ShieldCheck, Heart } from 'lucide-re
 
 export default function Hero() {
   return (
-    <section style={{
-      position: 'relative',
-      paddingTop: '2.5rem',
-      paddingBottom: '5rem',
-      overflow: 'hidden'
-    }}>
+    <section className="hero-section">
       {/* Soft background ambient gradient glow */}
       <div style={{
         position: 'absolute',
         top: '-15%',
         right: '5%',
-        width: '500px',
-        height: '500px',
+        width: 'min(500px, 90vw)',
+        height: 'min(500px, 90vw)',
         borderRadius: '50%',
         background: 'radial-gradient(circle, rgba(255, 209, 220, 0.4) 0%, rgba(255, 246, 245, 0) 70%)',
         zIndex: 0,
@@ -25,8 +20,8 @@ export default function Hero() {
         position: 'absolute',
         bottom: '5%',
         left: '-10%',
-        width: '450px',
-        height: '450px',
+        width: 'min(450px, 80vw)',
+        height: 'min(450px, 80vw)',
         borderRadius: '50%',
         background: 'radial-gradient(circle, rgba(247, 236, 217, 0.5) 0%, rgba(255, 246, 245, 0) 70%)',
         zIndex: 0,
@@ -34,12 +29,7 @@ export default function Hero() {
       }} />
 
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '3.5rem',
-          alignItems: 'center'
-        }}>
+        <div className="hero-grid">
           {/* Text Content */}
           <div>
             <div className="section-tag" style={{ marginBottom: '1.25rem' }}>
@@ -48,7 +38,7 @@ export default function Hero() {
             </div>
 
             <h1 style={{
-              fontSize: 'clamp(2.6rem, 5vw, 4.2rem)',
+              fontSize: 'clamp(2.3rem, 5.5vw, 4.2rem)',
               lineHeight: 1.08,
               letterSpacing: '-0.03em',
               marginBottom: '1.5rem',
@@ -61,7 +51,7 @@ export default function Hero() {
             </h1>
 
             <p style={{
-              fontSize: '1.15rem',
+              fontSize: 'clamp(1rem, 2.2vw, 1.15rem)',
               color: 'var(--color-cocoa-light)',
               lineHeight: 1.65,
               marginBottom: '2.25rem',
@@ -71,13 +61,7 @@ export default function Hero() {
             </p>
 
             {/* CTAs */}
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '1rem',
-              alignItems: 'center',
-              marginBottom: '3rem'
-            }}>
+            <div className="hero-actions">
               <a href="#treats" className="btn btn-primary" style={{ fontSize: '1rem', padding: '0.95rem 2rem' }}>
                 <span>Explore Today's Treats</span>
                 <ArrowRight size={18} />
@@ -89,19 +73,13 @@ export default function Hero() {
             </div>
 
             {/* Trust Highlights */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '1rem',
-              paddingTop: '1.75rem',
-              borderTop: '1px solid var(--color-cream-border)'
-            }}>
+            <div className="hero-trust-grid">
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--color-caramel-gold)', marginBottom: '0.2rem' }}>
                   <Star size={16} fill="currentColor" />
                   <span style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--color-cocoa-dark)' }}>4.9 / 5</span>
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--color-cocoa-muted)' }}>1,200+ Sweet Reviews</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--color-cocoa-muted)' }}>1,200+ Reviews</div>
               </div>
 
               <div>
@@ -109,7 +87,7 @@ export default function Hero() {
                   <ShieldCheck size={16} />
                   <span style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--color-cocoa-dark)' }}>100% Pure</span>
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--color-cocoa-muted)' }}>French Butter & Cocoa</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--color-cocoa-muted)' }}>French Butter</div>
               </div>
 
               <div>
@@ -117,13 +95,13 @@ export default function Hero() {
                   <Award size={16} />
                   <span style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--color-cocoa-dark)' }}>Daily Bake</span>
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--color-cocoa-muted)' }}>Warm out of the oven</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--color-cocoa-muted)' }}>Warm from Oven</div>
               </div>
             </div>
           </div>
 
           {/* Hero Visual Imagery */}
-          <div style={{ position: 'relative' }}>
+          <div className="hero-visual-col" style={{ position: 'relative' }}>
             {/* Main Visual Frame */}
             <div style={{
               position: 'relative',
@@ -141,70 +119,45 @@ export default function Hero() {
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
-                  transform: 'scale(1.02)',
-                  transition: 'transform 0.6s ease'
+                  transform: 'scale(1.02)'
                 }}
               />
             </div>
 
             {/* Floating Badge 1 - Top Right */}
-            <div
-              className="glass-pill animate-float"
-              style={{
-                position: 'absolute',
-                top: '-15px',
-                right: '-15px',
-                padding: '0.65rem 1.1rem',
-                borderRadius: 'var(--radius-full)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                boxShadow: 'var(--shadow-md)'
-              }}
-            >
+            <div className="glass-pill animate-float hero-badge-top">
               <div style={{
                 width: '10px',
                 height: '10px',
                 borderRadius: '50%',
-                backgroundColor: 'var(--color-caramel-gold)'
+                backgroundColor: 'var(--color-caramel-gold)',
+                flexShrink: 0
               }} />
-              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-cocoa-dark)' }}>
+              <span style={{ fontWeight: 700, color: 'var(--color-cocoa-dark)', whiteSpace: 'nowrap' }}>
                 Belgian Cocoa & Sea Salt
               </span>
             </div>
 
             {/* Floating Badge 2 - Bottom Left */}
-            <div
-              className="glass-pill"
-              style={{
-                position: 'absolute',
-                bottom: '-20px',
-                left: '-15px',
-                padding: '0.75rem 1.25rem',
-                borderRadius: 'var(--radius-lg)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.85rem',
-                boxShadow: 'var(--shadow-float)'
-              }}
-            >
+            <div className="glass-pill hero-badge-bottom">
               <div style={{
-                width: '42px',
-                height: '42px',
+                width: '40px',
+                height: '40px',
                 borderRadius: '50%',
                 backgroundColor: 'var(--color-berry-soft)',
                 color: 'var(--color-berry-rose)',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                flexShrink: 0
               }}>
-                <Heart size={20} fill="currentColor" />
+                <Heart size={18} fill="currentColor" />
               </div>
               <div>
-                <div style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--color-cocoa-dark)' }}>
+                <div style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--color-cocoa-dark)' }}>
                   Handcrafted with Care
                 </div>
-                <div style={{ fontSize: '0.78rem', color: 'var(--color-cocoa-muted)' }}>
+                <div style={{ fontSize: '0.75rem', color: 'var(--color-cocoa-muted)' }}>
                   Zero preservatives, 100% natural
                 </div>
               </div>

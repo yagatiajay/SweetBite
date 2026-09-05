@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Gift, Plus, Check, Sparkles, Trash2, ShoppingBag } from 'lucide-react';
+import { Gift, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 export default function BoxBuilder() {
@@ -106,58 +106,57 @@ export default function BoxBuilder() {
           </p>
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '3rem',
-          alignItems: 'start'
-        }}>
+        <div className="box-builder-grid">
           {/* Left: Box Visual Preview & Slots */}
           <div style={{
             backgroundColor: '#ffffff',
             borderRadius: 'var(--radius-xl)',
-            padding: '2rem',
+            padding: 'clamp(1.25rem, 3.5vw, 2rem)',
             border: '1px solid var(--color-cream-border)',
             boxShadow: 'var(--shadow-md)'
           }}>
             {/* Box Size Toggle */}
             <div style={{
               display: 'flex',
-              gap: '0.75rem',
-              marginBottom: '1.5rem',
+              gap: '0.5rem',
+              marginBottom: '1.25rem',
               backgroundColor: 'var(--color-canvas)',
-              padding: '0.4rem',
+              padding: '0.35rem',
               borderRadius: 'var(--radius-full)'
             }}>
               <button
+                type="button"
                 onClick={() => {
                   setBoxSize(4);
                   if (selectedItems.length > 4) setSelectedItems(selectedItems.slice(0, 4));
                 }}
                 style={{
                   flex: 1,
-                  padding: '0.6rem 1rem',
+                  padding: '0.55rem 0.85rem',
                   borderRadius: 'var(--radius-full)',
                   fontWeight: 700,
-                  fontSize: '0.9rem',
+                  fontSize: 'clamp(0.82rem, 2vw, 0.9rem)',
                   backgroundColor: boxSize === 4 ? 'var(--color-cocoa-primary)' : 'transparent',
                   color: boxSize === 4 ? '#ffffff' : 'var(--color-cocoa-medium)',
-                  transition: 'var(--transition-smooth)'
+                  transition: 'var(--transition-smooth)',
+                  textAlign: 'center'
                 }}
               >
                 4-Piece Box ($18.00)
               </button>
               <button
+                type="button"
                 onClick={() => setBoxSize(6)}
                 style={{
                   flex: 1,
-                  padding: '0.6rem 1rem',
+                  padding: '0.55rem 0.85rem',
                   borderRadius: 'var(--radius-full)',
                   fontWeight: 700,
-                  fontSize: '0.9rem',
+                  fontSize: 'clamp(0.82rem, 2vw, 0.9rem)',
                   backgroundColor: boxSize === 6 ? 'var(--color-cocoa-primary)' : 'transparent',
                   color: boxSize === 6 ? '#ffffff' : 'var(--color-cocoa-medium)',
-                  transition: 'var(--transition-smooth)'
+                  transition: 'var(--transition-smooth)',
+                  textAlign: 'center'
                 }}
               >
                 6-Piece Box ($26.00)
@@ -169,9 +168,9 @@ export default function BoxBuilder() {
               position: 'relative',
               borderRadius: 'var(--radius-lg)',
               overflow: 'hidden',
-              marginBottom: '1.5rem',
+              marginBottom: '1.25rem',
               aspectRatio: '16/9',
-              backgroundColor: '#eada range'
+              backgroundColor: '#eada8c'
             }}>
               <img
                 src="/treat-box.jpg"
@@ -180,12 +179,12 @@ export default function BoxBuilder() {
               />
               <div style={{
                 position: 'absolute',
-                top: '0.75rem',
-                right: '0.75rem',
+                top: '0.6rem',
+                right: '0.6rem',
                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                padding: '0.35rem 0.85rem',
+                padding: '0.3rem 0.75rem',
                 borderRadius: 'var(--radius-full)',
-                fontSize: '0.8rem',
+                fontSize: '0.78rem',
                 fontWeight: 700,
                 color: 'var(--color-cocoa-dark)',
                 boxShadow: 'var(--shadow-sm)'
@@ -195,30 +194,25 @@ export default function BoxBuilder() {
             </div>
 
             {/* Slots Grid */}
-            <h4 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--color-cocoa-medium)' }}>
+            <h4 style={{ fontSize: '0.95rem', marginBottom: '0.75rem', color: 'var(--color-cocoa-medium)' }}>
               Box Contents:
             </h4>
 
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: `repeat(${boxSize === 4 ? 2 : 3}, 1fr)`,
-              gap: '0.75rem',
-              marginBottom: '1.75rem'
-            }}>
+            <div className={boxSize === 4 ? "box-slots-grid-4" : "box-slots-grid-6"}>
               {Array.from({ length: boxSize }).map((_, idx) => {
                 const item = selectedItems[idx];
                 return (
                   <div
                     key={idx}
                     style={{
-                      height: '84px',
+                      height: '78px',
                       borderRadius: 'var(--radius-md)',
                       border: `1.5px dashed ${item ? 'var(--color-caramel-gold)' : 'var(--color-cream-border)'}`,
                       backgroundColor: item ? '#fdf8f4' : 'var(--color-canvas)',
                       display: 'flex',
                       alignItems: 'center',
-                      padding: '0.5rem',
-                      gap: '0.5rem',
+                      padding: '0.4rem 0.5rem',
+                      gap: '0.45rem',
                       position: 'relative',
                       overflow: 'hidden'
                     }}
@@ -228,28 +222,31 @@ export default function BoxBuilder() {
                         <img
                           src={item.image}
                           alt={item.name}
-                          style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-sm)', objectFit: 'cover' }}
+                          style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', objectFit: 'cover', flexShrink: 0 }}
                         />
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--color-cocoa-dark)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+                          <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-cocoa-dark)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {item.name}
                           </div>
-                          <div style={{ fontSize: '0.7rem', color: 'var(--color-cocoa-muted)' }}>
+                          <div style={{ fontSize: '0.68rem', color: 'var(--color-cocoa-muted)' }}>
                             {item.category}
                           </div>
                         </div>
                         <button
+                          type="button"
                           onClick={() => handleRemoveItem(idx)}
                           style={{
                             color: '#e11d48',
-                            padding: '0.2rem',
+                            padding: '0.25rem',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
+                            flexShrink: 0
                           }}
+                          aria-label={`Remove slot ${idx + 1}`}
                           title="Remove item"
                         >
-                          <Trash2 size={14} />
+                          <Trash2 size={15} />
                         </button>
                       </>
                     ) : (
@@ -273,13 +270,15 @@ export default function BoxBuilder() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              paddingTop: '1.25rem',
-              borderTop: '1px solid var(--color-cream-border)'
+              gap: '1rem',
+              paddingTop: '1.1rem',
+              borderTop: '1px solid var(--color-cream-border)',
+              flexWrap: 'wrap'
             }}>
               <div>
                 <span style={{ fontSize: '0.75rem', color: 'var(--color-cocoa-muted)', display: 'block' }}>Box Price</span>
                 <span style={{
-                  fontSize: '1.5rem',
+                  fontSize: '1.4rem',
                   fontWeight: 700,
                   fontFamily: 'var(--font-serif)',
                   color: 'var(--color-cocoa-dark)'
@@ -295,10 +294,11 @@ export default function BoxBuilder() {
                 className="btn btn-primary"
                 style={{
                   opacity: selectedItems.length === 0 ? 0.5 : 1,
-                  cursor: selectedItems.length === 0 ? 'not-allowed' : 'pointer'
+                  cursor: selectedItems.length === 0 ? 'not-allowed' : 'pointer',
+                  padding: '0.75rem 1.4rem'
                 }}
               >
-                <ShoppingBag size={18} />
+                <ShoppingBag size={17} />
                 <span>Add Box to Bag</span>
               </button>
             </div>
@@ -310,17 +310,19 @@ export default function BoxBuilder() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              marginBottom: '1rem'
+              marginBottom: '1rem',
+              gap: '0.5rem',
+              flexWrap: 'wrap'
             }}>
-              <h3 style={{ fontSize: '1.35rem', color: 'var(--color-cocoa-dark)' }}>
+              <h3 style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.35rem)', color: 'var(--color-cocoa-dark)' }}>
                 Select Your Delights
               </h3>
-              <span style={{ fontSize: '0.85rem', color: 'var(--color-cocoa-muted)' }}>
+              <span style={{ fontSize: '0.82rem', color: 'var(--color-cocoa-muted)' }}>
                 Tap '+' to add to box
               </span>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {boxOptions.map((item) => {
                 const countInBox = selectedItems.filter(i => i.id === item.id).length;
                 return (
@@ -329,51 +331,53 @@ export default function BoxBuilder() {
                     style={{
                       backgroundColor: '#ffffff',
                       borderRadius: 'var(--radius-md)',
-                      padding: '0.85rem 1rem',
+                      padding: '0.75rem 0.95rem',
                       border: '1px solid var(--color-cream-border)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       boxShadow: 'var(--shadow-sm)',
-                      transition: 'var(--transition-smooth)'
+                      gap: '0.75rem'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
                       <img
                         src={item.image}
                         alt={item.name}
                         style={{
-                          width: '56px',
-                          height: '56px',
+                          width: '48px',
+                          height: '48px',
                           borderRadius: 'var(--radius-sm)',
-                          objectFit: 'cover'
+                          objectFit: 'cover',
+                          flexShrink: 0
                         }}
                       />
-                      <div>
-                        <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--color-cocoa-dark)' }}>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--color-cocoa-dark)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {item.name}
                         </div>
-                        <div style={{ fontSize: '0.78rem', color: 'var(--color-cocoa-light)' }}>
-                          {item.category} • Individual: ${item.price.toFixed(2)}
+                        <div style={{ fontSize: '0.75rem', color: 'var(--color-cocoa-light)' }}>
+                          {item.category} • ${item.price.toFixed(2)}
                         </div>
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
                       {countInBox > 0 && (
                         <span style={{
                           backgroundColor: 'var(--color-berry-soft)',
                           color: 'var(--color-berry-rose)',
-                          fontSize: '0.75rem',
+                          fontSize: '0.72rem',
                           fontWeight: 700,
-                          padding: '0.2rem 0.5rem',
+                          padding: '0.2rem 0.45rem',
                           borderRadius: 'var(--radius-full)'
                         }}>
-                          {countInBox} in box
+                          {countInBox}
                         </span>
                       )}
 
                       <button
+                        type="button"
                         onClick={() => handleAddItem(item)}
                         disabled={isBoxFull}
                         style={{
@@ -388,6 +392,7 @@ export default function BoxBuilder() {
                           cursor: isBoxFull ? 'not-allowed' : 'pointer',
                           transition: 'var(--transition-bounce)'
                         }}
+                        aria-label={`Add ${item.name} to box`}
                         title={isBoxFull ? 'Box is full' : 'Add to box'}
                       >
                         <Plus size={16} />

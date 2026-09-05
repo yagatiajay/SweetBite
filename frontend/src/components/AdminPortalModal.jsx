@@ -1,68 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  X, Plus, Edit2, Trash2, Package, Upload, Check, AlertCircle, 
-  Sparkles, DollarSign, Tag, Clock, Truck, Store, Mail, Send, 
-  CheckCircle2, RefreshCw, Layers
-} from 'lucide-react';
+import { X, Plus, Edit2, Trash2, Check, AlertTriangle, ShieldCheck, Mail, Send, DollarSign, Tag, CheckCircle2, Upload } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { 
-  fetchProducts, fetchCategories, createProduct, updateProduct, 
-  updateProductStock, deleteProduct, uploadProductImage, 
-  fetchAllOrders, updateOrderStatus, sendTestEmailNotification 
+import {
+  fetchProducts,
+  fetchCategories,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  updateProductStock,
+  fetchAllOrders,
+  updateOrderStatus,
+  sendTestEmailNotification,
+  uploadProductImage
 } from '../services/api';
 import confetti from 'canvas-confetti';
 
 export default function AdminPortalModal() {
-  const { isAdminModalOpen, setIsAdminModalOpen, user } = useAuth();
+  const { isAdminModalOpen, setIsAdminModalOpen, isAdmin } = useAuth();
 
-  const [activeTab, setActiveTab] = useState('inventory'); // 'inventory' | 'orders' | 'settings'
+  const [activeTab, setActiveTab] = useState('inventory'); // 'inventory', 'orders', 'settings'
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Form State for Add / Edit Treat
+  // Add / Edit Product Form State
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
-    tagline: '',
     description: '',
     price: '',
     discountPercent: '0',
     stockQuantity: '20',
     categoryId: 1,
-    weightOrServings: '1 Portion (110g)',
+    weightOrServings: '1 Portion',
     isVeg: true,
     isGlutenFree: false,
     isFeatured: false,
     imageUrl: '',
     flavourNotes: '',
     ingredients: '',
-    allergens: 'Dairy, Gluten'
+    allergens: ''
   });
 
   const [uploadingImage, setUploadingImage] = useState(false);
   const [actionStatus, setActionStatus] = useState({ message: '', error: false });
   const [testEmailStatus, setTestEmailStatus] = useState('');
-
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const [prods, cats, ords] = await Promise.all([
-        fetchProducts({ category: 'all' }),
-        fetchCategories(),
-        fetchAllOrders()
-      ]);
-      setProducts(prods);
-      setCategories(cats);
-      setOrders(ords);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     if (isAdminModalOpen) {
@@ -70,43 +54,47 @@ export default function AdminPortalModal() {
     }
   }, [isAdminModalOpen]);
 
-  if (!isAdminModalOpen) return null;
-
-  // Handle Image Upload
-  const handleImageFileChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploadingImage(true);
+  const loadData = async () => {
+    setLoading(true);
     try {
-      const res = await uploadProductImage(file);
-      setFormData(prev => ({ ...prev, imageUrl: res.imageUrl }));
-      setActionStatus({ message: 'Image uploaded successfully!', error: false });
+      const [prodsData, catsData, ordsData] = await Promise.all([
+        fetchProducts({ category: 'all' }),
+        fetchCategories(),
+        fetchAllOrders()
+      ]);
+      setProducts(prodsData);
+      setCategories(catsData);
+      setOrders(ordsData);
+      if (catsData.length > 0 && !formData.categoryId) {
+        setFormData((prev) => ({ ...prev, categoryId: catsData[0].id }));
+      }
     } catch (err) {
-      setActionStatus({ message: err.message || 'Image upload failed', error: true });
+      console.error(err);
+      setActionStatus({ message: 'Error loading admin data', error: true });
     } finally {
-      setUploadingImage(false);
+      setLoading(false);
     }
   };
+
+  if (!isAdminModalOpen || !isAdmin) return null;
 
   const handleOpenAddForm = () => {
     setEditingId(null);
     setFormData({
       name: '',
-      tagline: '',
       description: '',
       price: '',
       discountPercent: '0',
       stockQuantity: '20',
       categoryId: categories[0]?.id || 1,
-      weightOrServings: '1 Portion (110g)',
+      weightOrServings: '1 Portion',
       isVeg: true,
       isGlutenFree: false,
       isFeatured: false,
-      imageUrl: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80',
+      imageUrl: '',
       flavourNotes: '',
       ingredients: '',
-      allergens: 'Dairy, Gluten'
+      allergens: ''
     });
     setIsFormOpen(true);
   };
@@ -115,7 +103,6 @@ export default function AdminPortalModal() {
     setEditingId(prod.id);
     setFormData({
       name: prod.name,
-      tagline: prod.tagline || '',
       description: prod.description || '',
       price: prod.originalPrice || prod.price,
       discountPercent: prod.discountPercent?.toString() || '0',
@@ -131,6 +118,22 @@ export default function AdminPortalModal() {
       allergens: prod.allergens || ''
     });
     setIsFormOpen(true);
+  };
+
+  const handleImageFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const result = await uploadProductImage(file);
+      setFormData((prev) => ({ ...prev, imageUrl: result.url }));
+      setActionStatus({ message: 'Product image uploaded successfully!', error: false });
+    } catch (err) {
+      setActionStatus({ message: 'Failed to upload image', error: true });
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSaveProduct = async (e) => {
@@ -222,9 +225,9 @@ export default function AdminPortalModal() {
         onClick={(e) => e.stopPropagation()}
         style={{
           maxWidth: '1080px',
-          width: '95%',
+          width: 'min(96vw, 1080px)',
           maxHeight: '92vh',
-          padding: '2rem',
+          padding: 'clamp(1rem, 3vw, 1.75rem)',
           display: 'flex',
           flexDirection: 'column',
           borderRadius: 'var(--radius-xl)'
@@ -235,35 +238,38 @@ export default function AdminPortalModal() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          paddingBottom: '1.25rem',
+          paddingBottom: '1rem',
           borderBottom: '1px solid var(--color-cream-border)',
-          marginBottom: '1.25rem'
+          marginBottom: '1rem',
+          gap: '0.75rem'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0 }}>
             <div style={{
-              width: '44px',
-              height: '44px',
+              width: '40px',
+              height: '40px',
               borderRadius: '50%',
               background: 'linear-gradient(135deg, var(--color-caramel-gold), var(--color-cocoa-primary))',
               color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '1.3rem'
+              fontSize: '1.2rem',
+              flexShrink: 0
             }}>
               👑
             </div>
-            <div>
-              <h2 style={{ fontSize: '1.5rem', color: 'var(--color-cocoa-dark)', margin: 0 }}>
+            <div style={{ minWidth: 0 }}>
+              <h2 style={{ fontSize: 'clamp(1.2rem, 3vw, 1.5rem)', color: 'var(--color-cocoa-dark)', margin: 0 }}>
                 Bakery Control Center
               </h2>
-              <p style={{ fontSize: '0.82rem', color: 'var(--color-cocoa-muted)', margin: 0 }}>
-                Full control over treats inventory, stock, promotional discounts, and live customer orders.
+              <p style={{ fontSize: '0.78rem', color: 'var(--color-cocoa-muted)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                Inventory, stock, promotional discounts, and live customer orders.
               </p>
             </div>
           </div>
 
           <button
+            type="button"
             onClick={() => setIsAdminModalOpen(false)}
             style={{
               padding: '0.4rem',
@@ -271,7 +277,8 @@ export default function AdminPortalModal() {
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              flexShrink: 0
             }}
             aria-label="Close"
           >
@@ -282,10 +289,10 @@ export default function AdminPortalModal() {
         {/* Global Action feedback */}
         {actionStatus.message && (
           <div style={{
-            padding: '0.65rem 1rem',
+            padding: '0.6rem 0.85rem',
             borderRadius: 'var(--radius-md)',
-            marginBottom: '1rem',
-            fontSize: '0.85rem',
+            marginBottom: '0.85rem',
+            fontSize: '0.82rem',
             fontWeight: 600,
             display: 'flex',
             alignItems: 'center',
@@ -294,35 +301,27 @@ export default function AdminPortalModal() {
             color: actionStatus.error ? '#b91c1c' : '#15803d'
           }}>
             <span>{actionStatus.message}</span>
-            <button onClick={() => setActionStatus({ message: '', error: false })}>
+            <button type="button" onClick={() => setActionStatus({ message: '', error: false })}>
               <X size={14} />
             </button>
           </div>
         )}
 
         {/* Tabs Bar */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          backgroundColor: 'var(--color-canvas)',
-          padding: '0.35rem',
-          borderRadius: 'var(--radius-full)',
-          marginBottom: '1.5rem',
-          border: '1px solid var(--color-cream-border)'
-        }}>
+        <div className="admin-tabs-nav">
           <button
             type="button"
             onClick={() => { setActiveTab('inventory'); setIsFormOpen(false); }}
             style={{
               flex: 1,
-              padding: '0.6rem 1rem',
+              padding: '0.55rem 0.75rem',
               borderRadius: 'var(--radius-full)',
-              fontSize: '0.88rem',
+              fontSize: '0.85rem',
               fontWeight: 700,
               backgroundColor: activeTab === 'inventory' ? 'var(--color-cocoa-primary)' : 'transparent',
               color: activeTab === 'inventory' ? '#ffffff' : 'var(--color-cocoa-medium)',
-              transition: 'var(--transition-smooth)'
+              transition: 'var(--transition-smooth)',
+              whiteSpace: 'nowrap'
             }}
           >
             🧁 Treats & Stock ({products.length})
@@ -333,13 +332,14 @@ export default function AdminPortalModal() {
             onClick={() => { setActiveTab('orders'); setIsFormOpen(false); }}
             style={{
               flex: 1,
-              padding: '0.6rem 1rem',
+              padding: '0.55rem 0.75rem',
               borderRadius: 'var(--radius-full)',
-              fontSize: '0.88rem',
+              fontSize: '0.85rem',
               fontWeight: 700,
               backgroundColor: activeTab === 'orders' ? 'var(--color-cocoa-primary)' : 'transparent',
               color: activeTab === 'orders' ? '#ffffff' : 'var(--color-cocoa-medium)',
-              transition: 'var(--transition-smooth)'
+              transition: 'var(--transition-smooth)',
+              whiteSpace: 'nowrap'
             }}
           >
             📋 Live Orders ({orders.length})
@@ -350,13 +350,14 @@ export default function AdminPortalModal() {
             onClick={() => { setActiveTab('settings'); setIsFormOpen(false); }}
             style={{
               flex: 1,
-              padding: '0.6rem 1rem',
+              padding: '0.55rem 0.75rem',
               borderRadius: 'var(--radius-full)',
-              fontSize: '0.88rem',
+              fontSize: '0.85rem',
               fontWeight: 700,
               backgroundColor: activeTab === 'settings' ? 'var(--color-cocoa-primary)' : 'transparent',
               color: activeTab === 'settings' ? '#ffffff' : 'var(--color-cocoa-medium)',
-              transition: 'var(--transition-smooth)'
+              transition: 'var(--transition-smooth)',
+              whiteSpace: 'nowrap'
             }}
           >
             📧 Notifications & Email
@@ -365,34 +366,30 @@ export default function AdminPortalModal() {
 
         {/* TAB 1: INVENTORY & PRODUCTS */}
         {activeTab === 'inventory' && (
-          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {/* KPI Summary Bar */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-              gap: '1rem'
-            }}>
-              <div style={{ backgroundColor: 'var(--color-canvas)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--color-cocoa-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Total Treats</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--color-cocoa-dark)' }}>{products.length}</div>
+            <div className="admin-stats-grid">
+              <div style={{ backgroundColor: 'var(--color-canvas)', padding: '0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)' }}>
+                <div style={{ fontSize: '0.72rem', color: 'var(--color-cocoa-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Total Treats</div>
+                <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--color-cocoa-dark)' }}>{products.length}</div>
               </div>
-              <div style={{ backgroundColor: '#fef3c7', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid #fde68a' }}>
-                <div style={{ fontSize: '0.75rem', color: '#b45309', textTransform: 'uppercase', fontWeight: 700 }}>Low Stock (&le; 5)</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#92400e' }}>{lowStockCount}</div>
+              <div style={{ backgroundColor: '#fef3c7', padding: '0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid #fde68a' }}>
+                <div style={{ fontSize: '0.72rem', color: '#b45309', textTransform: 'uppercase', fontWeight: 700 }}>Low Stock (&le; 5)</div>
+                <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#92400e' }}>{lowStockCount}</div>
               </div>
-              <div style={{ backgroundColor: '#fee2e2', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid #fecaca' }}>
-                <div style={{ fontSize: '0.75rem', color: '#b91c1c', textTransform: 'uppercase', fontWeight: 700 }}>Sold Out</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#991b1b' }}>{soldOutCount}</div>
+              <div style={{ backgroundColor: '#fee2e2', padding: '0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid #fecaca' }}>
+                <div style={{ fontSize: '0.72rem', color: '#b91c1c', textTransform: 'uppercase', fontWeight: 700 }}>Sold Out</div>
+                <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#991b1b' }}>{soldOutCount}</div>
               </div>
-              <div style={{ backgroundColor: '#ffe4e6', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid #fecdd3' }}>
-                <div style={{ fontSize: '0.75rem', color: '#be123c', textTransform: 'uppercase', fontWeight: 700 }}>Discount Offers</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#9f1239' }}>{discountedCount}</div>
+              <div style={{ backgroundColor: '#ffe4e6', padding: '0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid #fecdd3' }}>
+                <div style={{ fontSize: '0.72rem', color: '#be123c', textTransform: 'uppercase', fontWeight: 700 }}>On Sale</div>
+                <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#9f1239' }}>{discountedCount}</div>
               </div>
             </div>
 
             {/* Action Bar */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '1.15rem', color: 'var(--color-cocoa-dark)', margin: 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem' }}>
+              <h3 style={{ fontSize: '1.1rem', color: 'var(--color-cocoa-dark)', margin: 0 }}>
                 Bakery Menu Catalog
               </h3>
               <button
@@ -400,7 +397,7 @@ export default function AdminPortalModal() {
                 onClick={handleOpenAddForm}
                 className="btn btn-primary btn-sm"
               >
-                <Plus size={16} />
+                <Plus size={15} />
                 <span>Add New Treat</span>
               </button>
             </div>
@@ -410,23 +407,23 @@ export default function AdminPortalModal() {
               <div style={{
                 backgroundColor: 'var(--color-canvas)',
                 borderRadius: 'var(--radius-lg)',
-                padding: '1.75rem',
+                padding: 'clamp(1rem, 3vw, 1.5rem)',
                 border: '1.5px solid var(--color-caramel-gold)',
                 boxShadow: 'var(--shadow-sm)'
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-                  <h4 style={{ fontSize: '1.2rem', color: 'var(--color-cocoa-dark)', margin: 0 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h4 style={{ fontSize: '1.15rem', color: 'var(--color-cocoa-dark)', margin: 0 }}>
                     {editingId ? 'Edit Bakery Treat' : 'Add New Artisan Treat'}
                   </h4>
-                  <button onClick={() => setIsFormOpen(false)} style={{ color: 'var(--color-cocoa-muted)' }}>
+                  <button type="button" onClick={() => setIsFormOpen(false)} style={{ color: 'var(--color-cocoa-muted)' }}>
                     <X size={18} />
                   </button>
                 </div>
 
-                <form onSubmit={handleSaveProduct} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>
+                <form onSubmit={handleSaveProduct} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                  <div className="form-grid-2">
                     <div>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
+                      <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
                         Treat Name *
                       </label>
                       <input
@@ -435,18 +432,18 @@ export default function AdminPortalModal() {
                         placeholder="e.g. Belgian Triple Dark Brownie"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff' }}
+                        style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff', fontSize: '0.9rem' }}
                       />
                     </div>
 
                     <div>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
+                      <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
                         Category *
                       </label>
                       <select
                         value={formData.categoryId}
                         onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                        style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff' }}
+                        style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff', fontSize: '0.9rem', outline: 'none' }}
                       >
                         {categories.map((c) => (
                           <option key={c.id} value={c.id}>{c.name}</option>
@@ -456,9 +453,9 @@ export default function AdminPortalModal() {
                   </div>
 
                   {/* Price, Discount, Stock row */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                  <div className="admin-form-pricing-grid">
                     <div>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
+                      <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
                         Base Price ($) *
                       </label>
                       <input
@@ -468,12 +465,12 @@ export default function AdminPortalModal() {
                         placeholder="4.50"
                         value={formData.price}
                         onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                        style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff' }}
+                        style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff', fontSize: '0.9rem' }}
                       />
                     </div>
 
                     <div>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
+                      <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
                         Discount Offer (%)
                       </label>
                       <input
@@ -483,12 +480,12 @@ export default function AdminPortalModal() {
                         placeholder="0"
                         value={formData.discountPercent}
                         onChange={(e) => setFormData({ ...formData, discountPercent: e.target.value })}
-                        style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff' }}
+                        style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff', fontSize: '0.9rem' }}
                       />
                     </div>
 
                     <div>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
+                      <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
                         Stock Quantity *
                       </label>
                       <input
@@ -497,39 +494,40 @@ export default function AdminPortalModal() {
                         required
                         value={formData.stockQuantity}
                         onChange={(e) => setFormData({ ...formData, stockQuantity: e.target.value })}
-                        style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff' }}
+                        style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff', fontSize: '0.9rem' }}
                       />
                     </div>
                   </div>
 
                   {/* Image Upload & URL */}
                   <div>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
-                      Treat Photo (Upload from computer or paste Image URL) *
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
+                      Treat Photo (Upload file or paste URL) *
                     </label>
-                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', flexWrap: 'wrap' }}>
                       <input
                         type="text"
                         required
                         placeholder="https://... or /uploads/..."
                         value={formData.imageUrl}
                         onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                        style={{ flex: 1, padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff' }}
+                        style={{ flex: 1, minWidth: '180px', padding: '0.6rem 0.8rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff', fontSize: '0.9rem' }}
                       />
 
                       <label style={{
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: '0.4rem',
-                        padding: '0.65rem 1rem',
+                        gap: '0.35rem',
+                        padding: '0.6rem 0.9rem',
                         borderRadius: 'var(--radius-md)',
                         backgroundColor: 'var(--color-cocoa-primary)',
                         color: '#ffffff',
-                        fontSize: '0.85rem',
+                        fontSize: '0.82rem',
                         fontWeight: 600,
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap'
                       }}>
-                        <Upload size={15} />
+                        <Upload size={14} />
                         <span>{uploadingImage ? 'Uploading...' : 'Upload File'}</span>
                         <input type="file" accept="image/*" onChange={handleImageFileChange} style={{ display: 'none' }} />
                       </label>
@@ -538,7 +536,7 @@ export default function AdminPortalModal() {
                         <img
                           src={formData.imageUrl}
                           alt="Preview"
-                          style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', objectFit: 'cover' }}
+                          style={{ width: '38px', height: '38px', borderRadius: 'var(--radius-sm)', objectFit: 'cover', flexShrink: 0 }}
                         />
                       )}
                     </div>
@@ -546,7 +544,7 @@ export default function AdminPortalModal() {
 
                   {/* Description & Notes */}
                   <div>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
                       Detailed Description *
                     </label>
                     <textarea
@@ -555,26 +553,26 @@ export default function AdminPortalModal() {
                       placeholder="Rich, dense cocoa crumb infused with bourbon vanilla..."
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff' }}
+                      style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff', fontSize: '0.9rem' }}
                     />
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div className="form-grid-2">
                     <div>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
+                      <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
                         Flavor Profile Notes
                       </label>
                       <input
                         type="text"
-                        placeholder="Dark Cocoa • Sea Salt • Brown Butter"
+                        placeholder="Dark Cocoa • Sea Salt"
                         value={formData.flavourNotes}
                         onChange={(e) => setFormData({ ...formData, flavourNotes: e.target.value })}
-                        style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff' }}
+                        style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff', fontSize: '0.9rem' }}
                       />
                     </div>
 
                     <div>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
+                      <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.2rem' }}>
                         Weight or Servings
                       </label>
                       <input
@@ -582,23 +580,23 @@ export default function AdminPortalModal() {
                         placeholder="1 Square (110g) or 0.5 KG"
                         value={formData.weightOrServings}
                         onChange={(e) => setFormData({ ...formData, weightOrServings: e.target.value })}
-                        style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff' }}
+                        style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-cream-border)', backgroundColor: '#ffffff', fontSize: '0.9rem' }}
                       />
                     </div>
                   </div>
 
                   {/* Dietary checkboxes */}
-                  <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.88rem', fontWeight: 600, cursor: 'pointer' }}>
+                  <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>
                       <input
                         type="checkbox"
                         checked={formData.isVeg}
                         onChange={(e) => setFormData({ ...formData, isVeg: e.target.checked })}
                       />
-                      <span>🌱 100% Eggless / Vegetarian</span>
+                      <span>🌱 Eggless / Vegetarian</span>
                     </label>
 
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.88rem', fontWeight: 600, cursor: 'pointer' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>
                       <input
                         type="checkbox"
                         checked={formData.isGlutenFree}
@@ -607,22 +605,22 @@ export default function AdminPortalModal() {
                       <span>Gluten-Free</span>
                     </label>
 
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.88rem', fontWeight: 600, cursor: 'pointer' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>
                       <input
                         type="checkbox"
                         checked={formData.isFeatured}
                         onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
                       />
-                      <span>⭐ Featured on Homepage</span>
+                      <span>⭐ Featured</span>
                     </label>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.4rem' }}>
                     <button type="button" onClick={() => setIsFormOpen(false)} className="btn btn-outline btn-sm">
                       Cancel
                     </button>
                     <button type="submit" className="btn btn-primary btn-sm">
-                      <Check size={16} />
+                      <Check size={15} />
                       <span>{editingId ? 'Update Treat' : 'Publish Treat'}</span>
                     </button>
                   </div>
@@ -630,23 +628,24 @@ export default function AdminPortalModal() {
               </div>
             )}
 
-            {/* Products Table */}
+            {/* Products Table with touch-friendly scroll container */}
             <div style={{
               backgroundColor: '#ffffff',
               borderRadius: 'var(--radius-lg)',
               border: '1px solid var(--color-cream-border)',
               overflowX: 'auto',
+              WebkitOverflowScrolling: 'touch',
               boxShadow: 'var(--shadow-sm)'
             }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
+              <table style={{ width: '100%', minWidth: '640px', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
                 <thead>
                   <tr style={{ backgroundColor: 'var(--color-canvas)', borderBottom: '1px solid var(--color-cream-border)', color: 'var(--color-cocoa-medium)' }}>
-                    <th style={{ padding: '0.85rem 1rem' }}>Treat</th>
-                    <th style={{ padding: '0.85rem 1rem' }}>Category</th>
-                    <th style={{ padding: '0.85rem 1rem' }}>Price & Discount</th>
-                    <th style={{ padding: '0.85rem 1rem' }}>Stock Count</th>
-                    <th style={{ padding: '0.85rem 1rem' }}>Availability</th>
-                    <th style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>Actions</th>
+                    <th style={{ padding: '0.75rem 0.95rem' }}>Treat</th>
+                    <th style={{ padding: '0.75rem 0.95rem' }}>Category</th>
+                    <th style={{ padding: '0.75rem 0.95rem' }}>Price & Discount</th>
+                    <th style={{ padding: '0.75rem 0.95rem' }}>Stock Count</th>
+                    <th style={{ padding: '0.75rem 0.95rem' }}>Availability</th>
+                    <th style={{ padding: '0.75rem 0.95rem', textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -654,85 +653,99 @@ export default function AdminPortalModal() {
                     const isSoldOut = prod.isSoldOut || prod.stockQuantity === 0;
                     return (
                       <tr key={prod.id} style={{ borderBottom: '1px solid rgba(92, 56, 36, 0.06)' }}>
-                        <td style={{ padding: '0.85rem 1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <td style={{ padding: '0.75rem 0.95rem', display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                           <img
                             src={prod.imageUrl}
                             alt={prod.name}
-                            style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-sm)', objectFit: 'cover' }}
+                            style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', objectFit: 'cover', flexShrink: 0 }}
                           />
-                          <div>
-                            <div style={{ fontWeight: 700, color: 'var(--color-cocoa-dark)' }}>{prod.name}</div>
-                            <div style={{ fontSize: '0.75rem', color: 'var(--color-cocoa-muted)' }}>{prod.weightOrServings}</div>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ fontWeight: 700, color: 'var(--color-cocoa-dark)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '180px' }}>
+                              {prod.name}
+                            </div>
+                            <div style={{ fontSize: '0.72rem', color: 'var(--color-cocoa-muted)' }}>{prod.weightOrServings}</div>
                           </div>
                         </td>
 
-                        <td style={{ padding: '0.85rem 1rem', color: 'var(--color-cocoa-medium)' }}>
+                        <td style={{ padding: '0.75rem 0.95rem', color: 'var(--color-cocoa-medium)' }}>
                           {prod.category?.name || 'Artisan'}
                         </td>
 
-                        <td style={{ padding: '0.85rem 1rem' }}>
+                        <td style={{ padding: '0.75rem 0.95rem' }}>
                           <div style={{ fontWeight: 700, color: 'var(--color-cocoa-dark)' }}>
                             ${prod.price.toFixed(2)}
                           </div>
                           {prod.discountPercent > 0 && (
-                            <span style={{ fontSize: '0.72rem', backgroundColor: 'var(--color-berry-soft)', color: 'var(--color-berry-rose)', padding: '0.1rem 0.4rem', borderRadius: 'var(--radius-full)', fontWeight: 700 }}>
+                            <span style={{ fontSize: '0.7rem', backgroundColor: 'var(--color-berry-soft)', color: 'var(--color-berry-rose)', padding: '0.1rem 0.35rem', borderRadius: 'var(--radius-full)', fontWeight: 700 }}>
                               {prod.discountPercent}% OFF
                             </span>
                           )}
                         </td>
 
-                        <td style={{ padding: '0.85rem 1rem' }}>
+                        <td style={{ padding: '0.75rem 0.95rem' }}>
                           <input
                             type="number"
                             min="0"
                             value={prod.stockQuantity}
                             onChange={(e) => handleStockCountChange(prod, e.target.value)}
                             style={{
-                              width: '64px',
-                              padding: '0.35rem 0.5rem',
+                              width: '60px',
+                              padding: '0.25rem 0.4rem',
                               borderRadius: 'var(--radius-sm)',
                               border: '1px solid var(--color-cream-border)',
                               fontSize: '0.85rem',
                               fontWeight: 700,
-                              backgroundColor: prod.stockQuantity <= 5 ? '#fef3c7' : '#ffffff'
+                              textAlign: 'center'
                             }}
                           />
                         </td>
 
-                        <td style={{ padding: '0.85rem 1rem' }}>
+                        <td style={{ padding: '0.75rem 0.95rem' }}>
                           <button
                             type="button"
                             onClick={() => handleToggleSoldOut(prod)}
                             style={{
-                              padding: '0.3rem 0.75rem',
+                              padding: '0.25rem 0.65rem',
                               borderRadius: 'var(--radius-full)',
-                              fontSize: '0.78rem',
+                              fontSize: '0.75rem',
                               fontWeight: 700,
-                              border: 'none',
-                              cursor: 'pointer',
                               backgroundColor: isSoldOut ? '#fee2e2' : '#dcfce7',
-                              color: isSoldOut ? '#b91c1c' : '#15803d'
+                              color: isSoldOut ? '#b91c1c' : '#15803d',
+                              border: `1px solid ${isSoldOut ? '#fecaca' : '#bbf7d0'}`,
+                              cursor: 'pointer'
                             }}
                           >
                             {isSoldOut ? '🔴 Sold Out' : '🟢 In Stock'}
                           </button>
                         </td>
 
-                        <td style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>
-                          <div style={{ display: 'inline-flex', gap: '0.5rem' }}>
+                        <td style={{ padding: '0.75rem 0.95rem', textAlign: 'right' }}>
+                          <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
                             <button
+                              type="button"
                               onClick={() => handleOpenEditForm(prod)}
-                              style={{ padding: '0.35rem', color: 'var(--color-caramel-gold)', borderRadius: 'var(--radius-sm)' }}
+                              style={{
+                                padding: '0.35rem',
+                                color: 'var(--color-cocoa-dark)',
+                                borderRadius: 'var(--radius-sm)',
+                                backgroundColor: 'rgba(92, 56, 36, 0.05)'
+                              }}
                               title="Edit product"
                             >
-                              <Edit2 size={16} />
+                              <Edit2 size={15} />
                             </button>
                             <button
+                              type="button"
                               onClick={() => handleDelete(prod.id, prod.name)}
-                              style={{ padding: '0.35rem', color: '#e11d48', borderRadius: 'var(--radius-sm)' }}
+                              style={{
+                                padding: '0.35rem',
+                                color: '#e11d48',
+                                borderRadius: 'var(--radius-sm)',
+                                backgroundColor: '#fff1f2'
+                              }}
                               title="Delete product"
                             >
-                              <Trash2 size={16} />
+                              <Trash2 size={15} />
                             </button>
                           </div>
                         </td>
@@ -745,21 +758,11 @@ export default function AdminPortalModal() {
           </div>
         )}
 
-        {/* TAB 2: LIVE ORDERS & PIPELINE */}
+        {/* TAB 2: LIVE ORDERS MANAGEMENT */}
         {activeTab === 'orders' && (
           <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '1.15rem', color: 'var(--color-cocoa-dark)', margin: 0 }}>
-                Customer Orders Queue
-              </h3>
-              <button onClick={loadData} className="btn btn-outline btn-sm">
-                <RefreshCw size={14} />
-                <span>Refresh Queue</span>
-              </button>
-            </div>
-
             {orders.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--color-cocoa-muted)' }}>
+              <div style={{ textAlign: 'center', padding: '3.5rem 1rem', color: 'var(--color-cocoa-muted)' }}>
                 No customer orders received yet.
               </div>
             ) : (
@@ -768,8 +771,8 @@ export default function AdminPortalModal() {
                   key={ord.id}
                   style={{
                     backgroundColor: 'var(--color-canvas)',
-                    borderRadius: 'var(--radius-lg)',
-                    padding: '1.25rem',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '1rem',
                     border: '1px solid var(--color-cream-border)',
                     boxShadow: 'var(--shadow-sm)'
                   }}
@@ -779,37 +782,37 @@ export default function AdminPortalModal() {
                     flexWrap: 'wrap',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    gap: '1rem',
-                    marginBottom: '0.75rem',
-                    paddingBottom: '0.75rem',
+                    gap: '0.75rem',
+                    marginBottom: '0.65rem',
+                    paddingBottom: '0.65rem',
                     borderBottom: '1px solid rgba(92, 56, 36, 0.08)'
                   }}>
                     <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                        <span style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--color-cocoa-dark)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        <span style={{ fontWeight: 800, fontSize: '0.98rem', color: 'var(--color-cocoa-dark)' }}>
                           {ord.orderReference}
                         </span>
-                        <span style={{ fontSize: '0.8rem', color: 'var(--color-cocoa-muted)' }}>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-cocoa-muted)' }}>
                           {new Date(ord.createdAt).toLocaleDateString()} at {new Date(ord.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
-                      <div style={{ fontSize: '0.88rem', color: 'var(--color-cocoa-medium)', marginTop: '2px' }}>
+                      <div style={{ fontSize: '0.82rem', color: 'var(--color-cocoa-medium)', marginTop: '2px' }}>
                         <strong>{ord.customerName}</strong> ({ord.customerEmail} • {ord.customerPhone})
                       </div>
                     </div>
 
                     {/* Status Dropdown */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-cocoa-medium)' }}>
-                        Oven Status:
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--color-cocoa-medium)' }}>
+                        Status:
                       </span>
                       <select
                         value={ord.status}
                         onChange={(e) => handleUpdateOrderStatus(ord.id, e.target.value)}
                         style={{
-                          padding: '0.45rem 0.85rem',
+                          padding: '0.35rem 0.65rem',
                           borderRadius: 'var(--radius-full)',
-                          fontSize: '0.85rem',
+                          fontSize: '0.8rem',
                           fontWeight: 700,
                           backgroundColor: ord.status === 'Delivered' ? '#dcfce7' : ord.status === 'Baking' ? '#ffe4e6' : '#fef3c7',
                           color: ord.status === 'Delivered' ? '#15803d' : ord.status === 'Baking' ? '#e11d48' : '#b45309',
@@ -818,19 +821,19 @@ export default function AdminPortalModal() {
                           cursor: 'pointer'
                         }}
                       >
-                        <option value="Confirmed">✦ Confirmed & Scheduled</option>
-                        <option value="Baking">🥣 Baking in Oven</option>
-                        <option value="Ready">🚀 Ready for Pickup / En Route</option>
-                        <option value="Delivered">✅ Delivered / Completed</option>
+                        <option value="Confirmed">✦ Confirmed</option>
+                        <option value="Baking">🥣 Baking</option>
+                        <option value="Ready">🚀 Ready / En Route</option>
+                        <option value="Delivered">✅ Delivered</option>
                       </select>
                     </div>
                   </div>
 
                   {/* Fulfillment and Notes */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem', color: 'var(--color-cocoa-medium)', marginBottom: '0.75rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem', color: 'var(--color-cocoa-medium)', marginBottom: '0.65rem', flexWrap: 'wrap', gap: '0.5rem' }}>
                     <div>
-                      {ord.deliveryType === 'Pickup' ? '🏪 Bakery Pickup' : `🚚 Delivery to: ${ord.deliveryAddress}`} • Date: <strong>{ord.deliveryDate}</strong>
-                      {ord.specialNotes && <span style={{ marginLeft: '8px', color: 'var(--color-caramel-gold)' }}>Note: "{ord.specialNotes}"</span>}
+                      {ord.deliveryType === 'Pickup' ? '🏪 Bakery Pickup' : `🚚 Delivery: ${ord.deliveryAddress}`} • Date: <strong>{ord.deliveryDate}</strong>
+                      {ord.specialNotes && <span style={{ marginLeft: '6px', color: 'var(--color-caramel-gold)' }}>Note: "{ord.specialNotes}"</span>}
                     </div>
                     <div>
                       Payment: <strong>{ord.paymentMethod}</strong> ({ord.paymentStatus})
@@ -838,15 +841,15 @@ export default function AdminPortalModal() {
                   </div>
 
                   {/* Items summary */}
-                  <div style={{ backgroundColor: '#ffffff', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.85rem' }}>
+                  <div style={{ backgroundColor: '#ffffff', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-sm)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', fontSize: '0.82rem' }}>
                       {ord.items?.map((it, idx) => (
                         <span key={idx} style={{ color: 'var(--color-cocoa-dark)' }}>
                           <strong>{it.quantity}x</strong> {it.productName}
                         </span>
                       ))}
                     </div>
-                    <div style={{ fontSize: '1.15rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--color-cocoa-dark)' }}>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--color-cocoa-dark)' }}>
                       ${ord.totalAmount.toFixed(2)}
                     </div>
                   </div>
@@ -858,31 +861,32 @@ export default function AdminPortalModal() {
 
         {/* TAB 3: NOTIFICATIONS & EMAIL */}
         {activeTab === 'settings' && (
-          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{
               backgroundColor: 'var(--color-canvas)',
               borderRadius: 'var(--radius-lg)',
-              padding: '2rem',
+              padding: 'clamp(1rem, 3vw, 1.75rem)',
               border: '1px solid var(--color-cream-border)'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
                 <div style={{
-                  width: '40px',
-                  height: '40px',
+                  width: '38px',
+                  height: '38px',
                   borderRadius: '50%',
                   backgroundColor: 'var(--color-berry-soft)',
                   color: 'var(--color-berry-rose)',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  flexShrink: 0
                 }}>
-                  <Mail size={20} />
+                  <Mail size={18} />
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '1.2rem', color: 'var(--color-cocoa-dark)', margin: 0 }}>
+                  <h3 style={{ fontSize: '1.15rem', color: 'var(--color-cocoa-dark)', margin: 0 }}>
                     Order Alert Email Notifications
                   </h3>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--color-cocoa-muted)', margin: 0 }}>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--color-cocoa-muted)', margin: 0 }}>
                     Whenever a customer places an order, an automated bakery receipt is dispatched immediately.
                   </p>
                 </div>
@@ -890,37 +894,37 @@ export default function AdminPortalModal() {
 
               <div style={{
                 backgroundColor: '#ffffff',
-                padding: '1.25rem',
+                padding: '1rem',
                 borderRadius: 'var(--radius-md)',
                 border: '1px solid var(--color-cream-border)',
-                marginBottom: '1.5rem'
+                marginBottom: '1.25rem'
               }}>
-                <div style={{ fontSize: '0.8rem', color: 'var(--color-cocoa-muted)', marginBottom: '0.25rem' }}>
+                <div style={{ fontSize: '0.78rem', color: 'var(--color-cocoa-muted)', marginBottom: '0.2rem' }}>
                   Registered Bakery Owner Email:
                 </div>
-                <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--color-caramel-gold)' }}>
+                <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-caramel-gold)' }}>
                   yagatiajay2@gmail.com
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--color-tag-veg-text)', marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                  <CheckCircle2 size={14} />
+                <div style={{ fontSize: '0.78rem', color: 'var(--color-tag-veg-text)', marginTop: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <CheckCircle2 size={13} />
                   <span>Configured & active in backend appsettings.json</span>
                 </div>
               </div>
 
               {/* Test Email Button */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                 <button
                   type="button"
                   onClick={handleSendTestEmail}
                   className="btn btn-primary"
                   style={{ alignSelf: 'flex-start' }}
                 >
-                  <Send size={16} />
+                  <Send size={15} />
                   <span>Send Test Notification to yagatiajay2@gmail.com</span>
                 </button>
 
                 {testEmailStatus && (
-                  <div style={{ fontSize: '0.85rem', color: 'var(--color-cocoa-dark)', fontWeight: 600 }}>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--color-cocoa-dark)', fontWeight: 600 }}>
                     {testEmailStatus}
                   </div>
                 )}
@@ -929,6 +933,56 @@ export default function AdminPortalModal() {
           </div>
         )}
       </div>
+
+      <style>{`
+        .admin-tabs-nav {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          background-color: var(--color-canvas);
+          padding: 0.3rem;
+          border-radius: var(--radius-full);
+          margin-bottom: 1.25rem;
+          border: 1px solid var(--color-cream-border);
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+        .admin-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 0.85rem;
+        }
+        .admin-form-pricing-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0.85rem;
+        }
+        @media (max-width: 768px) {
+          .admin-stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+          .admin-form-pricing-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (max-width: 540px) {
+          .admin-tabs-nav {
+            flex-direction: column;
+            border-radius: var(--radius-lg);
+          }
+          .admin-tabs-nav button {
+            width: 100%;
+          }
+          .admin-stats-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+          }
+          .admin-form-pricing-grid {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+          }
+        }
+      `}</style>
     </div>
   );
 }

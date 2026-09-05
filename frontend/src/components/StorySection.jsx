@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Sparkles, Feather, Flame, Clock, ShieldCheck } from 'lucide-react';
+import { Heart, Sparkles, Feather, Clock, ShieldCheck } from 'lucide-react';
 
 export default function StorySection() {
   const pillars = [
@@ -28,14 +28,9 @@ export default function StorySection() {
   return (
     <section id="story" className="section" style={{ backgroundColor: '#ffffff' }}>
       <div className="container">
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '4rem',
-          alignItems: 'center'
-        }}>
+        <div className="story-grid">
           {/* Left: Atmospheric Baker Image */}
-          <div style={{ position: 'relative' }}>
+          <div className="story-visual-col" style={{ position: 'relative' }}>
             <div style={{
               borderRadius: 'var(--radius-xl)',
               overflow: 'hidden',
@@ -51,23 +46,12 @@ export default function StorySection() {
             </div>
 
             {/* Accent Card */}
-            <div
-              className="glass-pill"
-              style={{
-                position: 'absolute',
-                bottom: '-25px',
-                right: '-20px',
-                padding: '1.25rem 1.75rem',
-                borderRadius: 'var(--radius-lg)',
-                maxWidth: '260px',
-                boxShadow: 'var(--shadow-float)'
-              }}
-            >
+            <div className="glass-pill story-accent-card">
               <div style={{
                 fontFamily: 'var(--font-script)',
-                fontSize: '1.6rem',
+                fontSize: 'clamp(1.35rem, 3vw, 1.6rem)',
                 color: 'var(--color-caramel-gold)',
-                lineHeight: 1.1,
+                lineHeight: 1.15,
                 marginBottom: '0.35rem'
               }}>
                 From our kitchen to your celebrations
@@ -86,9 +70,9 @@ export default function StorySection() {
             </div>
 
             <h2 style={{
-              fontSize: 'clamp(2.2rem, 4vw, 3.2rem)',
+              fontSize: 'clamp(2rem, 4.5vw, 3.2rem)',
               lineHeight: 1.12,
-              marginBottom: '1.5rem',
+              marginBottom: '1.25rem',
               color: 'var(--color-cocoa-dark)'
             }}>
               We believe great desserts <br />
@@ -96,7 +80,7 @@ export default function StorySection() {
             </h2>
 
             <p style={{
-              fontSize: '1.05rem',
+              fontSize: 'clamp(0.95rem, 2vw, 1.05rem)',
               color: 'var(--color-cocoa-light)',
               lineHeight: 1.7,
               marginBottom: '2rem'
@@ -105,31 +89,28 @@ export default function StorySection() {
             </p>
 
             {/* 4 Pillars Grid */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '1.5rem'
-            }}>
+            <div className="story-pillars-grid">
               {pillars.map((pillar, i) => {
                 const IconComponent = pillar.icon;
                 return (
-                  <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
                     <div style={{
-                      width: '40px',
-                      height: '40px',
+                      width: '38px',
+                      height: '38px',
                       borderRadius: '50%',
                       backgroundColor: 'var(--color-canvas-subtle)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: 'var(--color-caramel-gold)'
+                      color: 'var(--color-caramel-gold)',
+                      flexShrink: 0
                     }}>
-                      <IconComponent size={20} />
+                      <IconComponent size={19} />
                     </div>
-                    <h4 style={{ fontSize: '1rem', color: 'var(--color-cocoa-dark)' }}>
+                    <h4 style={{ fontSize: '0.98rem', color: 'var(--color-cocoa-dark)' }}>
                       {pillar.title}
                     </h4>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--color-cocoa-muted)', lineHeight: 1.5 }}>
+                    <p style={{ fontSize: '0.82rem', color: 'var(--color-cocoa-muted)', lineHeight: 1.5 }}>
                       {pillar.desc}
                     </p>
                   </div>

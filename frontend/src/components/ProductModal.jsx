@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Plus, Minus, ShoppingBag, Star, Sparkles, AlertCircle, Tag } from 'lucide-react';
+import { X, Plus, Minus, ShoppingBag, Star, AlertCircle } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 export default function ProductModal() {
@@ -21,19 +21,19 @@ export default function ProductModal() {
   return (
     <div className="modal-overlay" onClick={() => setQuickViewProduct(null)}>
       <div
-        className="modal-content"
+        className="modal-content product-modal-content"
         onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: '780px', maxHeight: '88vh' }}
+        style={{ maxWidth: '780px' }}
       >
         {/* Close Button */}
         <button
           onClick={() => setQuickViewProduct(null)}
           style={{
             position: 'absolute',
-            top: '1rem',
-            right: '1rem',
+            top: '0.85rem',
+            right: '0.85rem',
             zIndex: 10,
-            backgroundColor: 'rgba(255, 255, 255, 0.85)',
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
             backdropFilter: 'blur(8px)',
             borderRadius: '50%',
             width: '36px',
@@ -49,14 +49,9 @@ export default function ProductModal() {
           <X size={20} />
         </button>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          height: '100%',
-          overflowY: 'auto'
-        }}>
+        <div className="product-modal-grid">
           {/* Image */}
-          <div style={{ position: 'relative', height: '100%', minHeight: '320px', backgroundColor: '#f5ede8' }}>
+          <div className="product-modal-image-col">
             <img
               src={quickViewProduct.imageUrl}
               alt={quickViewProduct.name}
@@ -82,10 +77,10 @@ export default function ProductModal() {
                   backgroundColor: '#1f130c',
                   color: '#ffffff',
                   fontWeight: 800,
-                  fontSize: '0.9rem',
+                  fontSize: '0.85rem',
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
-                  padding: '0.5rem 1.25rem',
+                  padding: '0.45rem 1.1rem',
                   borderRadius: 'var(--radius-full)'
                 }}>
                   Sold Out for Today
@@ -95,9 +90,9 @@ export default function ProductModal() {
           </div>
 
           {/* Details */}
-          <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column' }}>
+          <div className="product-modal-details-col">
             {/* Header info */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
               {quickViewProduct.category && (
                 <span style={{
                   fontSize: '0.75rem',
@@ -116,7 +111,7 @@ export default function ProductModal() {
                   color: '#ffffff',
                   padding: '0.2rem 0.6rem',
                   borderRadius: 'var(--radius-full)',
-                  fontSize: '0.75rem',
+                  fontSize: '0.72rem',
                   fontWeight: 800
                 }}>
                   {quickViewProduct.discountPercent}% OFF
@@ -129,7 +124,7 @@ export default function ProductModal() {
 
               {isLowStock && (
                 <span style={{
-                  fontSize: '0.75rem',
+                  fontSize: '0.72rem',
                   fontWeight: 700,
                   color: '#d97706',
                   backgroundColor: '#fef3c7',
@@ -142,7 +137,7 @@ export default function ProductModal() {
             </div>
 
             <h2 style={{
-              fontSize: '1.75rem',
+              fontSize: 'clamp(1.4rem, 3vw, 1.75rem)',
               color: 'var(--color-cocoa-dark)',
               marginBottom: '0.35rem',
               lineHeight: 1.2
@@ -150,30 +145,30 @@ export default function ProductModal() {
               {quickViewProduct.name}
             </h2>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--color-caramel-gold)' }}>
-                <Star size={16} fill="currentColor" />
-                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--color-cocoa-dark)' }}>
+                <Star size={15} fill="currentColor" />
+                <span style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--color-cocoa-dark)' }}>
                   {quickViewProduct.rating.toFixed(1)}
                 </span>
-                <span style={{ fontSize: '0.85rem', color: 'var(--color-cocoa-muted)' }}>
+                <span style={{ fontSize: '0.82rem', color: 'var(--color-cocoa-muted)' }}>
                   ({quickViewProduct.reviewCount} reviews)
                 </span>
               </div>
 
               <span style={{ color: 'var(--color-cocoa-muted)' }}>•</span>
 
-              <span style={{ fontSize: '0.9rem', color: 'var(--color-cocoa-medium)', fontWeight: 500 }}>
+              <span style={{ fontSize: '0.85rem', color: 'var(--color-cocoa-medium)', fontWeight: 500 }}>
                 {quickViewProduct.weightOrServings}
               </span>
             </div>
 
             {/* Description */}
             <p style={{
-              fontSize: '0.95rem',
+              fontSize: '0.92rem',
               color: 'var(--color-cocoa-medium)',
               lineHeight: 1.6,
-              marginBottom: '1.25rem'
+              marginBottom: '1rem'
             }}>
               {quickViewProduct.description}
             </p>
@@ -182,35 +177,35 @@ export default function ProductModal() {
             {quickViewProduct.flavourNotes && (
               <div style={{
                 backgroundColor: 'var(--color-canvas-subtle)',
-                padding: '0.75rem 1rem',
+                padding: '0.65rem 0.85rem',
                 borderRadius: 'var(--radius-md)',
-                marginBottom: '1.25rem',
+                marginBottom: '1rem',
                 border: '1px solid var(--color-cream-border)'
               }}>
                 <div style={{
-                  fontSize: '0.75rem',
+                  fontSize: '0.72rem',
                   fontWeight: 700,
                   textTransform: 'uppercase',
                   color: 'var(--color-caramel-gold)',
-                  marginBottom: '0.2rem',
+                  marginBottom: '0.15rem',
                   letterSpacing: '0.04em'
                 }}>
                   Flavor Profile
                 </div>
-                <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--color-cocoa-dark)' }}>
+                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-cocoa-dark)' }}>
                   {quickViewProduct.flavourNotes}
                 </div>
               </div>
             )}
 
             {/* Ingredients & Allergens */}
-            <div style={{ marginBottom: '1.5rem', fontSize: '0.85rem', color: 'var(--color-cocoa-light)', flex: 1 }}>
-              <div style={{ marginBottom: '0.5rem' }}>
+            <div style={{ marginBottom: '1.25rem', fontSize: '0.82rem', color: 'var(--color-cocoa-light)', flex: 1 }}>
+              <div style={{ marginBottom: '0.35rem' }}>
                 <strong style={{ color: 'var(--color-cocoa-dark)' }}>Ingredients: </strong>
                 {quickViewProduct.ingredients || 'Hand-selected organic flour, pure butter, cane sugar, fine chocolate.'}
               </div>
               {quickViewProduct.allergens && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#b45309', fontSize: '0.8rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#b45309', fontSize: '0.78rem' }}>
                   <AlertCircle size={14} />
                   <span>Contains: {quickViewProduct.allergens}</span>
                 </div>
@@ -218,19 +213,12 @@ export default function ProductModal() {
             </div>
 
             {/* Action footer */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '1rem',
-              paddingTop: '1.25rem',
-              borderTop: '1px solid var(--color-cream-border)'
-            }}>
+            <div className="product-modal-footer">
               <div>
-                <span style={{ fontSize: '0.8rem', color: 'var(--color-cocoa-muted)', display: 'block' }}>Total</span>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--color-cocoa-muted)', display: 'block' }}>Total</span>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.35rem' }}>
                   <span style={{
-                    fontSize: '1.6rem',
+                    fontSize: '1.5rem',
                     fontWeight: 700,
                     fontFamily: 'var(--font-serif)',
                     color: 'var(--color-cocoa-dark)'
@@ -239,7 +227,7 @@ export default function ProductModal() {
                   </span>
                   {hasDiscount && (
                     <span style={{
-                      fontSize: '1rem',
+                      fontSize: '0.9rem',
                       color: 'var(--color-cocoa-muted)',
                       textDecoration: 'line-through'
                     }}>
@@ -257,24 +245,24 @@ export default function ProductModal() {
                   backgroundColor: 'var(--color-canvas-subtle)',
                   borderRadius: 'var(--radius-full)',
                   border: '1px solid var(--color-cream-border)',
-                  padding: '0.25rem 0.5rem'
+                  padding: '0.2rem 0.4rem'
                 }}>
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    style={{ padding: '0.4rem', color: 'var(--color-cocoa-dark)' }}
+                    style={{ padding: '0.35rem', color: 'var(--color-cocoa-dark)' }}
                     aria-label="Decrease quantity"
                   >
-                    <Minus size={16} />
+                    <Minus size={15} />
                   </button>
-                  <span style={{ minWidth: '32px', textAlign: 'center', fontWeight: 700, fontSize: '0.95rem' }}>
+                  <span style={{ minWidth: '28px', textAlign: 'center', fontWeight: 700, fontSize: '0.9rem' }}>
                     {quantity}
                   </span>
                   <button
                     onClick={() => setQuantity(Math.min(quickViewProduct.stockQuantity, quantity + 1))}
-                    style={{ padding: '0.4rem', color: 'var(--color-cocoa-dark)' }}
+                    style={{ padding: '0.35rem', color: 'var(--color-cocoa-dark)' }}
                     aria-label="Increase quantity"
                   >
-                    <Plus size={16} />
+                    <Plus size={15} />
                   </button>
                 </div>
               )}
@@ -286,8 +274,7 @@ export default function ProductModal() {
                 disabled={isSoldOut}
                 className="btn btn-primary"
                 style={{
-                  flex: 1,
-                  padding: '0.75rem 1.25rem',
+                  padding: '0.7rem 1.25rem',
                   backgroundColor: isSoldOut ? '#e5e7eb' : 'var(--color-cocoa-primary)',
                   color: isSoldOut ? '#9ca3af' : '#ffffff',
                   cursor: isSoldOut ? 'not-allowed' : 'pointer'
@@ -297,7 +284,7 @@ export default function ProductModal() {
                   <span>Sold Out</span>
                 ) : (
                   <>
-                    <ShoppingBag size={18} />
+                    <ShoppingBag size={17} />
                     <span>Add to Bag</span>
                   </>
                 )}
@@ -306,6 +293,53 @@ export default function ProductModal() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        .product-modal-content {
+          max-height: 88vh;
+        }
+        .product-modal-grid {
+          display: grid;
+          grid-template-columns: 1fr 1.15fr;
+          height: 100%;
+          overflow-y: auto;
+        }
+        .product-modal-image-col {
+          position: relative;
+          height: 100%;
+          min-height: 320px;
+          background-color: #f5ede8;
+        }
+        .product-modal-details-col {
+          padding: 2rem;
+          display: flex;
+          flex-direction: column;
+        }
+        .product-modal-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.85rem;
+          padding-top: 1.1rem;
+          border-top: 1px solid var(--color-cream-border);
+          flex-wrap: wrap;
+        }
+        @media (max-width: 680px) {
+          .product-modal-grid {
+            grid-template-columns: 1fr;
+          }
+          .product-modal-image-col {
+            min-height: 220px;
+            max-height: 240px;
+          }
+          .product-modal-details-col {
+            padding: 1.25rem;
+          }
+          .product-modal-footer {
+            gap: 0.75rem;
+          }
+        }
+      `}</style>
     </div>
   );
 }

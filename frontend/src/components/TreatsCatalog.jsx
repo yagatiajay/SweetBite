@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Sparkles, Filter, X } from 'lucide-react';
+import { Sparkles, Search, X } from 'lucide-react';
 import ProductCard from './ProductCard';
-import { fetchProducts, fetchCategories } from '../services/api';
+import { fetchCategories, fetchProducts } from '../services/api';
 
 export default function TreatsCatalog() {
   const [categories, setCategories] = useState([]);
@@ -58,24 +58,27 @@ export default function TreatsCatalog() {
           gap: '1.25rem',
           marginBottom: '2.5rem'
         }}>
-          {/* Top row: Category Tabs */}
+          {/* Top row: Category Tabs - Smooth horizontal scrolling */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.6rem',
+            gap: '0.5rem',
             overflowX: 'auto',
             paddingBottom: '0.5rem',
+            WebkitOverflowScrolling: 'touch',
             scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
           }}>
             <button
               onClick={() => setActiveCategory('all')}
               style={{
-                padding: '0.6rem 1.4rem',
+                padding: '0.55rem 1.25rem',
                 borderRadius: 'var(--radius-full)',
-                fontSize: '0.92rem',
+                fontSize: '0.9rem',
                 fontWeight: 600,
                 transition: 'var(--transition-smooth)',
                 whiteSpace: 'nowrap',
+                flexShrink: 0,
                 backgroundColor: activeCategory === 'all' ? 'var(--color-cocoa-primary)' : '#ffffff',
                 color: activeCategory === 'all' ? '#ffffff' : 'var(--color-cocoa-medium)',
                 boxShadow: activeCategory === 'all' ? 'var(--shadow-sm)' : 'none',
@@ -92,12 +95,13 @@ export default function TreatsCatalog() {
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.slug)}
                   style={{
-                    padding: '0.6rem 1.4rem',
+                    padding: '0.55rem 1.25rem',
                     borderRadius: 'var(--radius-full)',
-                    fontSize: '0.92rem',
+                    fontSize: '0.9rem',
                     fontWeight: 600,
                     transition: 'var(--transition-smooth)',
                     whiteSpace: 'nowrap',
+                    flexShrink: 0,
                     backgroundColor: isActive ? 'var(--color-cocoa-primary)' : '#ffffff',
                     color: isActive ? '#ffffff' : 'var(--color-cocoa-medium)',
                     boxShadow: isActive ? 'var(--shadow-sm)' : 'none',
@@ -111,26 +115,10 @@ export default function TreatsCatalog() {
           </div>
 
           {/* Bottom row: Search input & Dietary filters */}
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1rem',
-            backgroundColor: '#ffffff',
-            padding: '0.75rem 1.25rem',
-            borderRadius: 'var(--radius-lg)',
-            border: '1px solid var(--color-cream-border)',
-            boxShadow: 'var(--shadow-sm)'
-          }}>
+          <div className="treats-filter-bar">
             {/* Search Input */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.6rem',
-              flex: '1 1 260px'
-            }}>
-              <Search size={18} color="var(--color-cocoa-muted)" />
+            <div className="treats-search-box">
+              <Search size={18} color="var(--color-cocoa-muted)" style={{ flexShrink: 0 }} />
               <input
                 type="text"
                 placeholder="Search brownies, sea salt cookies, cakes..."
@@ -140,39 +128,40 @@ export default function TreatsCatalog() {
                   border: 'none',
                   outline: 'none',
                   width: '100%',
-                  fontSize: '0.95rem',
+                  fontSize: '0.92rem',
                   backgroundColor: 'transparent'
                 }}
               />
               {searchQuery && (
-                <button onClick={() => setSearchQuery('')} style={{ color: 'var(--color-cocoa-muted)' }}>
+                <button onClick={() => setSearchQuery('')} style={{ color: 'var(--color-cocoa-muted)', flexShrink: 0 }}>
                   <X size={16} />
                 </button>
               )}
             </div>
 
-            {/* Veg filter toggle */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            {/* Veg filter toggle and count */}
+            <div className="treats-filter-row-bottom" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <button
                 onClick={() => setVegOnly(!vegOnly)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.4rem',
-                  padding: '0.45rem 0.95rem',
+                  padding: '0.45rem 0.9rem',
                   borderRadius: 'var(--radius-full)',
-                  fontSize: '0.85rem',
+                  fontSize: '0.82rem',
                   fontWeight: 600,
                   backgroundColor: vegOnly ? 'var(--color-tag-veg-bg)' : 'transparent',
                   color: vegOnly ? 'var(--color-tag-veg-text)' : 'var(--color-cocoa-light)',
                   border: `1px solid ${vegOnly ? '#a5d6a7' : 'var(--color-cream-border)'}`,
-                  transition: 'var(--transition-smooth)'
+                  transition: 'var(--transition-smooth)',
+                  whiteSpace: 'nowrap'
                 }}
               >
                 <span>🌱 Eggless Only</span>
               </button>
 
-              <span style={{ fontSize: '0.85rem', color: 'var(--color-cocoa-muted)', fontWeight: 500 }}>
+              <span style={{ fontSize: '0.82rem', color: 'var(--color-cocoa-muted)', fontWeight: 500, whiteSpace: 'nowrap' }}>
                 {products.length} {products.length === 1 ? 'item' : 'items'}
               </span>
             </div>
@@ -181,11 +170,7 @@ export default function TreatsCatalog() {
 
         {/* Product Grid */}
         {loading ? (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-            gap: '2rem'
-          }}>
+          <div className="treats-grid">
             {[1, 2, 3, 4].map((n) => (
               <div
                 key={n}
@@ -200,11 +185,7 @@ export default function TreatsCatalog() {
             ))}
           </div>
         ) : products.length > 0 ? (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))',
-            gap: '2rem'
-          }}>
+          <div className="treats-grid">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -218,10 +199,10 @@ export default function TreatsCatalog() {
             border: '1px dashed var(--color-cream-border)'
           }}>
             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🍪</div>
-            <h3 style={{ fontSize: '1.4rem', color: 'var(--color-cocoa-dark)', marginBottom: '0.5rem' }}>
+            <h3 style={{ fontSize: '1.35rem', color: 'var(--color-cocoa-dark)', marginBottom: '0.5rem' }}>
               No treats match your criteria
             </h3>
-            <p style={{ color: 'var(--color-cocoa-muted)', marginBottom: '1.5rem' }}>
+            <p style={{ color: 'var(--color-cocoa-muted)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
               Try clearing your search term or switching to "All Treats".
             </p>
             <button

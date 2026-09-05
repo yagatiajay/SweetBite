@@ -1,32 +1,37 @@
 import React, { useState } from 'react';
-import { X, Lock, Mail, User, Phone, MapPin, Sparkles, ArrowRight, AlertCircle, ShieldCheck } from 'lucide-react';
+import { X, Mail, Lock, User, Phone, MapPin, Sparkles, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function AuthModal() {
-  const { isAuthModalOpen, setIsAuthModalOpen, authTab, setAuthTab, login, register } = useAuth();
+  const { isAuthModalOpen, authTab, closeAuthModal, setAuthTab, login, register } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
-
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   if (!isAuthModalOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError(null);
     setLoading(true);
 
     try {
       if (authTab === 'login') {
         await login(email, password);
       } else {
-        await register(fullName, email, password, phone, address);
+        await register({ fullName, email, password, phone, address });
       }
+      closeAuthModal();
+      setEmail('');
+      setPassword('');
+      setFullName('');
+      setPhone('');
+      setAddress('');
     } catch (err) {
       setError(err.message || 'Authentication failed. Please check your credentials.');
     } finally {
@@ -35,8 +40,8 @@ export default function AuthModal() {
   };
 
   const handleFillCustomer = () => {
-    setEmail('sarah@sweetbite.com');
-    setPassword('Password123!');
+    setEmail('sarah@example.com');
+    setPassword('Customer123!');
   };
 
   const handleFillAdmin = () => {
@@ -45,25 +50,25 @@ export default function AuthModal() {
   };
 
   return (
-    <div className="modal-overlay" onClick={() => setIsAuthModalOpen(false)}>
+    <div className="modal-overlay" onClick={closeAuthModal}>
       <div
         className="modal-content"
         onClick={(e) => e.stopPropagation()}
         style={{
           maxWidth: '480px',
-          padding: '2.5rem 2.25rem',
-          borderRadius: 'var(--radius-xl)',
-          position: 'relative',
-          overflowY: 'auto'
+          padding: 'clamp(1.25rem, 4vw, 2.25rem)',
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative'
         }}
       >
         {/* Close Button */}
         <button
-          onClick={() => setIsAuthModalOpen(false)}
+          onClick={closeAuthModal}
           style={{
             position: 'absolute',
-            top: '1.25rem',
-            right: '1.25rem',
+            top: '1rem',
+            right: '1rem',
             padding: '0.4rem',
             color: 'var(--color-cocoa-muted)',
             borderRadius: '50%',
@@ -76,28 +81,37 @@ export default function AuthModal() {
           <X size={20} />
         </button>
 
-        {/* Modal Header */}
-        <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-          <div style={{
-            width: '52px',
-            height: '52px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--color-caramel-gold), var(--color-cocoa-primary))',
-            color: '#ffffff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1.6rem',
-            margin: '0 auto 0.75rem',
-            boxShadow: 'var(--shadow-sm)'
-          }}>
+        {/* Brand Icon & Welcome */}
+        <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+          <div
+            style={{
+              width: '46px',
+              height: '46px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, var(--color-cocoa-primary), var(--color-caramel-gold))',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#ffffff',
+              fontSize: '1.35rem',
+              margin: '0 auto 0.75rem',
+              boxShadow: '0 6px 16px rgba(61, 35, 20, 0.2)'
+            }}
+          >
             🧁
           </div>
-          <h3 style={{ fontSize: '1.65rem', color: 'var(--color-cocoa-dark)', marginBottom: '0.35rem' }}>
-            {authTab === 'login' ? 'Welcome Back' : 'Create an Account'}
+
+          <h3 style={{
+            fontSize: 'clamp(1.25rem, 3.5vw, 1.55rem)',
+            color: 'var(--color-cocoa-dark)',
+            margin: '0 0 0.25rem'
+          }}>
+            {authTab === 'login' ? 'Welcome Back to Sweet Bite' : 'Join the Sweet Bite Family'}
           </h3>
-          <p style={{ fontSize: '0.9rem', color: 'var(--color-cocoa-muted)' }}>
-            {authTab === 'login' ? 'Access your orders & sweet rewards' : 'Join Sweet Bite for fresh daily bakes'}
+          <p style={{ fontSize: '0.82rem', color: 'var(--color-cocoa-muted)', margin: 0 }}>
+            {authTab === 'login'
+              ? 'Access your saved orders, reward points, and treat subscriptions.'
+              : 'Create an account to track orders and receive exclusive weekend bake alerts.'}
           </p>
         </div>
 
@@ -105,23 +119,22 @@ export default function AuthModal() {
         <div style={{
           display: 'flex',
           backgroundColor: 'var(--color-canvas)',
+          padding: '0.25rem',
           borderRadius: 'var(--radius-full)',
-          padding: '0.3rem',
-          marginBottom: '1.75rem',
+          marginBottom: '1.25rem',
           border: '1px solid var(--color-cream-border)'
         }}>
           <button
             type="button"
-            onClick={() => { setAuthTab('login'); setError(''); }}
+            onClick={() => { setAuthTab('login'); setError(null); }}
             style={{
               flex: 1,
-              padding: '0.6rem',
+              padding: '0.55rem',
               borderRadius: 'var(--radius-full)',
-              fontSize: '0.9rem',
+              fontSize: '0.88rem',
               fontWeight: 700,
-              backgroundColor: authTab === 'login' ? '#ffffff' : 'transparent',
-              color: authTab === 'login' ? 'var(--color-cocoa-dark)' : 'var(--color-cocoa-muted)',
-              boxShadow: authTab === 'login' ? 'var(--shadow-sm)' : 'none',
+              backgroundColor: authTab === 'login' ? 'var(--color-cocoa-primary)' : 'transparent',
+              color: authTab === 'login' ? '#ffffff' : 'var(--color-cocoa-medium)',
               transition: 'var(--transition-smooth)'
             }}
           >
@@ -129,50 +142,48 @@ export default function AuthModal() {
           </button>
           <button
             type="button"
-            onClick={() => { setAuthTab('register'); setError(''); }}
+            onClick={() => { setAuthTab('register'); setError(null); }}
             style={{
               flex: 1,
-              padding: '0.6rem',
+              padding: '0.55rem',
               borderRadius: 'var(--radius-full)',
-              fontSize: '0.9rem',
+              fontSize: '0.88rem',
               fontWeight: 700,
-              backgroundColor: authTab === 'register' ? '#ffffff' : 'transparent',
-              color: authTab === 'register' ? 'var(--color-cocoa-dark)' : 'var(--color-cocoa-muted)',
-              boxShadow: authTab === 'register' ? 'var(--shadow-sm)' : 'none',
+              backgroundColor: authTab === 'register' ? 'var(--color-cocoa-primary)' : 'transparent',
+              color: authTab === 'register' ? '#ffffff' : 'var(--color-cocoa-medium)',
               transition: 'var(--transition-smooth)'
             }}
           >
-            Register
+            Create Account
           </button>
         </div>
 
         {/* Error Alert */}
         {error && (
           <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
             backgroundColor: '#fee2e2',
             color: '#b91c1c',
-            padding: '0.85rem 1rem',
+            padding: '0.65rem 0.85rem',
             borderRadius: 'var(--radius-md)',
-            fontSize: '0.85rem',
-            marginBottom: '1.5rem'
+            fontSize: '0.82rem',
+            marginBottom: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
           }}>
-            <AlertCircle size={16} style={{ flexShrink: 0 }} />
-            <span>{error}</span>
+            <span>⚠️ {error}</span>
           </div>
         )}
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.15rem' }}>
+        {/* Auth Form */}
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.95rem' }}>
           {authTab === 'register' && (
             <div>
               <label style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.35rem' }}>
                 Full Name *
               </label>
               <div style={{ position: 'relative' }}>
-                <User size={17} color="var(--color-cocoa-muted)" style={{ position: 'absolute', left: '0.95rem', top: '50%', transform: 'translateY(-50%)' }} />
+                <User size={16} color="var(--color-cocoa-muted)" style={{ position: 'absolute', left: '0.95rem', top: '50%', transform: 'translateY(-50%)' }} />
                 <input
                   type="text"
                   required
@@ -181,12 +192,12 @@ export default function AuthModal() {
                   onChange={(e) => setFullName(e.target.value)}
                   style={{
                     width: '100%',
-                    padding: '0.75rem 1rem 0.75rem 2.6rem',
+                    padding: '0.7rem 1rem 0.7rem 2.6rem',
                     borderRadius: 'var(--radius-md)',
                     border: '1px solid var(--color-cream-border)',
                     backgroundColor: 'var(--color-canvas)',
                     outline: 'none',
-                    fontSize: '0.95rem'
+                    fontSize: '0.92rem'
                   }}
                 />
               </div>
@@ -198,7 +209,7 @@ export default function AuthModal() {
               Email Address *
             </label>
             <div style={{ position: 'relative' }}>
-              <Mail size={17} color="var(--color-cocoa-muted)" style={{ position: 'absolute', left: '0.95rem', top: '50%', transform: 'translateY(-50%)' }} />
+              <Mail size={16} color="var(--color-cocoa-muted)" style={{ position: 'absolute', left: '0.95rem', top: '50%', transform: 'translateY(-50%)' }} />
               <input
                 type="email"
                 required
@@ -207,12 +218,12 @@ export default function AuthModal() {
                 onChange={(e) => setEmail(e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '0.75rem 1rem 0.75rem 2.6rem',
+                  padding: '0.7rem 1rem 0.7rem 2.6rem',
                   borderRadius: 'var(--radius-md)',
                   border: '1px solid var(--color-cream-border)',
                   backgroundColor: 'var(--color-canvas)',
                   outline: 'none',
-                  fontSize: '0.95rem'
+                  fontSize: '0.92rem'
                 }}
               />
             </div>
@@ -223,7 +234,7 @@ export default function AuthModal() {
               Password *
             </label>
             <div style={{ position: 'relative' }}>
-              <Lock size={17} color="var(--color-cocoa-muted)" style={{ position: 'absolute', left: '0.95rem', top: '50%', transform: 'translateY(-50%)' }} />
+              <Lock size={16} color="var(--color-cocoa-muted)" style={{ position: 'absolute', left: '0.95rem', top: '50%', transform: 'translateY(-50%)' }} />
               <input
                 type="password"
                 required
@@ -232,25 +243,25 @@ export default function AuthModal() {
                 onChange={(e) => setPassword(e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '0.75rem 1rem 0.75rem 2.6rem',
+                  padding: '0.7rem 1rem 0.7rem 2.6rem',
                   borderRadius: 'var(--radius-md)',
                   border: '1px solid var(--color-cream-border)',
                   backgroundColor: 'var(--color-canvas)',
                   outline: 'none',
-                  fontSize: '0.95rem'
+                  fontSize: '0.92rem'
                 }}
               />
             </div>
           </div>
 
           {authTab === 'register' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="form-grid-2">
               <div>
                 <label style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--color-cocoa-medium)', display: 'block', marginBottom: '0.35rem' }}>
                   Phone Number
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <Phone size={16} color="var(--color-cocoa-muted)" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
+                  <Phone size={15} color="var(--color-cocoa-muted)" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type="tel"
                     placeholder="+1 555-0192"
@@ -258,12 +269,12 @@ export default function AuthModal() {
                     onChange={(e) => setPhone(e.target.value)}
                     style={{
                       width: '100%',
-                      padding: '0.75rem 0.85rem 0.75rem 2.4rem',
+                      padding: '0.7rem 0.85rem 0.7rem 2.3rem',
                       borderRadius: 'var(--radius-md)',
                       border: '1px solid var(--color-cream-border)',
                       backgroundColor: 'var(--color-canvas)',
                       outline: 'none',
-                      fontSize: '0.9rem'
+                      fontSize: '0.88rem'
                     }}
                   />
                 </div>
@@ -274,7 +285,7 @@ export default function AuthModal() {
                   Delivery Address
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <MapPin size={16} color="var(--color-cocoa-muted)" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
+                  <MapPin size={15} color="var(--color-cocoa-muted)" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type="text"
                     placeholder="City, Street"
@@ -282,12 +293,12 @@ export default function AuthModal() {
                     onChange={(e) => setAddress(e.target.value)}
                     style={{
                       width: '100%',
-                      padding: '0.75rem 0.85rem 0.75rem 2.4rem',
+                      padding: '0.7rem 0.85rem 0.7rem 2.3rem',
                       borderRadius: 'var(--radius-md)',
                       border: '1px solid var(--color-cream-border)',
                       backgroundColor: 'var(--color-canvas)',
                       outline: 'none',
-                      fontSize: '0.9rem'
+                      fontSize: '0.88rem'
                     }}
                   />
                 </div>
@@ -295,42 +306,42 @@ export default function AuthModal() {
             </div>
           )}
 
-          {/* Spacious, uncrowded submit button */}
-          <div style={{ marginTop: '0.85rem' }}>
+          {/* Submit Button */}
+          <div style={{ marginTop: '0.5rem' }}>
             <button
               type="submit"
               disabled={loading}
               className="btn btn-primary"
               style={{
                 width: '100%',
-                padding: '0.95rem 1.5rem',
-                fontSize: '1rem',
+                padding: '0.85rem 1.5rem',
+                fontSize: '0.98rem',
                 justifyContent: 'center',
                 boxShadow: '0 6px 20px -4px rgba(61, 35, 20, 0.3)'
               }}
             >
               <span>{loading ? 'Please wait...' : authTab === 'login' ? 'Sign In to Sweet Bite' : 'Create My Account'}</span>
-              <ArrowRight size={18} />
+              <ArrowRight size={17} />
             </button>
           </div>
         </form>
 
         {/* Quick Demo Fill Buttons */}
         <div style={{
-          marginTop: '1.75rem',
-          paddingTop: '1.25rem',
+          marginTop: '1.25rem',
+          paddingTop: '1rem',
           borderTop: '1px solid var(--color-cream-border)',
           textAlign: 'center'
         }}>
-          <div style={{ fontSize: '0.78rem', color: 'var(--color-cocoa-muted)', marginBottom: '0.65rem' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--color-cocoa-muted)', marginBottom: '0.5rem' }}>
             Quick Demo Logins:
           </div>
-          <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button
               type="button"
               onClick={handleFillCustomer}
               style={{
-                fontSize: '0.78rem',
+                fontSize: '0.75rem',
                 backgroundColor: 'var(--color-canvas)',
                 color: 'var(--color-cocoa-primary)',
                 padding: '0.35rem 0.75rem',
@@ -347,7 +358,7 @@ export default function AuthModal() {
               type="button"
               onClick={handleFillAdmin}
               style={{
-                fontSize: '0.78rem',
+                fontSize: '0.75rem',
                 backgroundColor: 'var(--color-caramel-soft)',
                 color: 'var(--color-caramel-hover)',
                 padding: '0.35rem 0.75rem',
@@ -357,7 +368,7 @@ export default function AuthModal() {
                 transition: 'var(--transition-smooth)'
               }}
             >
-              👑 Admin (Bakery Owner)
+              👑 Admin (Owner)
             </button>
           </div>
         </div>

@@ -46,18 +46,14 @@ export default function Testimonials() {
           </p>
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '2rem'
-        }}>
+        <div className="reviews-grid">
           {reviews.map((rev, i) => (
             <div
               key={i}
               style={{
                 backgroundColor: '#ffffff',
                 borderRadius: 'var(--radius-xl)',
-                padding: '2.25rem',
+                padding: 'clamp(1.25rem, 3.5vw, 2.25rem)',
                 border: '1px solid var(--color-cream-border)',
                 boxShadow: 'var(--shadow-sm)',
                 display: 'flex',
@@ -76,17 +72,17 @@ export default function Testimonials() {
             >
               <div>
                 {/* Star rating */}
-                <div style={{ display: 'flex', gap: '0.25rem', color: 'var(--color-caramel-gold)', marginBottom: '1.25rem' }}>
+                <div style={{ display: 'flex', gap: '0.2rem', color: 'var(--color-caramel-gold)', marginBottom: '1rem' }}>
                   {Array.from({ length: rev.rating }).map((_, idx) => (
-                    <Star key={idx} size={18} fill="currentColor" />
+                    <Star key={idx} size={16} fill="currentColor" />
                   ))}
                 </div>
 
                 <p style={{
-                  fontSize: '1rem',
+                  fontSize: 'clamp(0.92rem, 2vw, 1rem)',
                   lineHeight: 1.65,
                   color: 'var(--color-cocoa-primary)',
-                  marginBottom: '1.75rem',
+                  marginBottom: '1.5rem',
                   fontStyle: 'italic'
                 }}>
                   "{rev.quote}"
@@ -97,28 +93,29 @@ export default function Testimonials() {
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '1rem',
-                paddingTop: '1.25rem',
+                gap: '0.85rem',
+                paddingTop: '1.1rem',
                 borderTop: '1px solid var(--color-cream-border)'
               }}>
                 <img
                   src={rev.avatar}
                   alt={rev.name}
                   style={{
-                    width: '46px',
-                    height: '46px',
+                    width: '42px',
+                    height: '42px',
                     borderRadius: '50%',
-                    objectFit: 'cover'
+                    objectFit: 'cover',
+                    flexShrink: 0
                   }}
                 />
-                <div>
+                <div style={{ minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--color-cocoa-dark)' }}>
+                    <span style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--color-cocoa-dark)' }}>
                       {rev.name}
                     </span>
-                    <CheckCircle2 size={14} color="#16a34a" />
+                    <CheckCircle2 size={13} color="#16a34a" />
                   </div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--color-cocoa-muted)' }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-cocoa-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     Ordered: <strong style={{ color: 'var(--color-caramel-gold)' }}>{rev.treatOrdered}</strong>
                   </div>
                 </div>
