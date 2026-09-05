@@ -42,7 +42,7 @@ export function CartProvider({ children }) {
         particleCount: 40,
         spread: 60,
         origin: { y: 0.8 },
-        colors: ['#b67c26', '#d64069', '#3d2314', '#ffd1dc']
+        colors: ['#b67c26', '#c2410c', '#3d2314', '#faeed9']
       });
     }
   };

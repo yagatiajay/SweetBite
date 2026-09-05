@@ -60,13 +60,25 @@ export function AuthProvider({ children }) {
       particleCount: 35,
       spread: 50,
       origin: { y: 0.7 },
-      colors: ['#b67c26', '#d64069', '#3d2314']
+      colors: ['#b67824', '#e2a348', '#382015', '#faeed9']
     });
     return data;
   };
 
-  const register = async (fullName, email, password, phone = '', address = '') => {
-    const data = await registerUser({ fullName, email, password, phone, address });
+  const register = async (arg1, emailArg, passwordArg, phoneArg = '', addressArg = '') => {
+    let payload;
+    if (typeof arg1 === 'object' && arg1 !== null) {
+      payload = arg1;
+    } else {
+      payload = {
+        fullName: arg1,
+        email: emailArg,
+        password: passwordArg,
+        phone: phoneArg,
+        address: addressArg
+      };
+    }
+    const data = await registerUser(payload);
     setUser(data.user);
     setToken(data.token);
     setIsAuthModalOpen(false);
@@ -74,7 +86,7 @@ export function AuthProvider({ children }) {
       particleCount: 50,
       spread: 70,
       origin: { y: 0.7 },
-      colors: ['#b67c26', '#d64069', '#3d2314', '#ffe1db']
+      colors: ['#b67824', '#e2a348', '#382015', '#fef3e7']
     });
     return data;
   };
@@ -91,6 +103,10 @@ export function AuthProvider({ children }) {
     setIsAuthModalOpen(true);
   };
 
+  const closeAuthModal = () => {
+    setIsAuthModalOpen(false);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -103,13 +119,14 @@ export function AuthProvider({ children }) {
         logout,
         isAuthModalOpen,
         setIsAuthModalOpen,
+        openAuthModal,
+        closeAuthModal,
         isOrdersModalOpen,
         setIsOrdersModalOpen,
         isAdminModalOpen,
         setIsAdminModalOpen,
         authTab,
-        setAuthTab,
-        openAuthModal
+        setAuthTab
       }}
     >
       {children}

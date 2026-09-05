@@ -4,7 +4,7 @@ import { ArrowRight, Star, Sparkles, Award, ShieldCheck, Heart } from 'lucide-re
 export default function Hero() {
   return (
     <section className="hero-section">
-      {/* Soft background ambient gradient glow */}
+      {/* Soft warm honey & golden caramel ambient glow (No pink) */}
       <div style={{
         position: 'absolute',
         top: '-15%',
@@ -12,7 +12,7 @@ export default function Hero() {
         width: 'min(500px, 90vw)',
         height: 'min(500px, 90vw)',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255, 209, 220, 0.4) 0%, rgba(255, 246, 245, 0) 70%)',
+        background: 'radial-gradient(circle, rgba(246, 218, 168, 0.35) 0%, rgba(252, 250, 247, 0) 70%)',
         zIndex: 0,
         pointerEvents: 'none'
       }} />
@@ -23,7 +23,7 @@ export default function Hero() {
         width: 'min(450px, 80vw)',
         height: 'min(450px, 80vw)',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(247, 236, 217, 0.5) 0%, rgba(255, 246, 245, 0) 70%)',
+        background: 'radial-gradient(circle, rgba(238, 222, 196, 0.4) 0%, rgba(252, 250, 247, 0) 70%)',
         zIndex: 0,
         pointerEvents: 'none'
       }} />
@@ -83,7 +83,7 @@ export default function Hero() {
               </div>
 
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--color-berry-rose)', marginBottom: '0.2rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--color-caramel-gold)', marginBottom: '0.2rem' }}>
                   <ShieldCheck size={16} />
                   <span style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--color-cocoa-dark)' }}>100% Pure</span>
                 </div>
@@ -109,7 +109,7 @@ export default function Hero() {
               overflow: 'hidden',
               boxShadow: 'var(--shadow-lg)',
               border: '6px solid #ffffff',
-              background: '#f5ebe6',
+              background: '#f5efe6',
               aspectRatio: '4/3'
             }}>
               <img
@@ -144,8 +144,8 @@ export default function Hero() {
                 width: '40px',
                 height: '40px',
                 borderRadius: '50%',
-                backgroundColor: 'var(--color-berry-soft)',
-                color: 'var(--color-berry-rose)',
+                backgroundColor: 'var(--color-caramel-soft)',
+                color: 'var(--color-caramel-gold)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

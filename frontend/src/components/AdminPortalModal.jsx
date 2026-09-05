@@ -381,9 +381,9 @@ export default function AdminPortalModal() {
                 <div style={{ fontSize: '0.72rem', color: '#b91c1c', textTransform: 'uppercase', fontWeight: 700 }}>Sold Out</div>
                 <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#991b1b' }}>{soldOutCount}</div>
               </div>
-              <div style={{ backgroundColor: '#ffe4e6', padding: '0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid #fecdd3' }}>
-                <div style={{ fontSize: '0.72rem', color: '#be123c', textTransform: 'uppercase', fontWeight: 700 }}>On Sale</div>
-                <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#9f1239' }}>{discountedCount}</div>
+              <div style={{ backgroundColor: '#ffedd5', padding: '0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid #fed7aa' }}>
+                <div style={{ fontSize: '0.72rem', color: '#c2410c', textTransform: 'uppercase', fontWeight: 700 }}>On Sale</div>
+                <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#9a3412' }}>{discountedCount}</div>
               </div>
             </div>
 
@@ -676,7 +676,7 @@ export default function AdminPortalModal() {
                             ${prod.price.toFixed(2)}
                           </div>
                           {prod.discountPercent > 0 && (
-                            <span style={{ fontSize: '0.7rem', backgroundColor: 'var(--color-berry-soft)', color: 'var(--color-berry-rose)', padding: '0.1rem 0.35rem', borderRadius: 'var(--radius-full)', fontWeight: 700 }}>
+                            <span style={{ fontSize: '0.7rem', backgroundColor: 'var(--color-offer-soft)', color: 'var(--color-offer-bg)', padding: '0.15rem 0.45rem', borderRadius: 'var(--radius-full)', fontWeight: 700 }}>
                               {prod.discountPercent}% OFF
                             </span>
                           )}
@@ -873,8 +873,8 @@ export default function AdminPortalModal() {
                   width: '38px',
                   height: '38px',
                   borderRadius: '50%',
-                  backgroundColor: 'var(--color-berry-soft)',
-                  color: 'var(--color-berry-rose)',
+                  backgroundColor: 'var(--color-caramel-soft)',
+                  color: 'var(--color-caramel-gold)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -911,21 +911,40 @@ export default function AdminPortalModal() {
                 </div>
               </div>
 
-              {/* Test Email Button */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+              {/* Test Email Button & Status */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', alignItems: 'flex-start' }}>
                 <button
                   type="button"
                   onClick={handleSendTestEmail}
                   className="btn btn-primary"
-                  style={{ alignSelf: 'flex-start' }}
+                  style={{
+                    padding: '0.85rem 1.6rem',
+                    fontSize: '0.95rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.55rem',
+                    boxShadow: 'var(--shadow-sm)'
+                  }}
                 >
-                  <Send size={15} />
-                  <span>Send Test Notification to yagatiajay2@gmail.com</span>
+                  <Send size={16} />
+                  <span>Send Test Email Notification</span>
                 </button>
 
                 {testEmailStatus && (
-                  <div style={{ fontSize: '0.82rem', color: 'var(--color-cocoa-dark)', fontWeight: 600 }}>
-                    {testEmailStatus}
+                  <div style={{
+                    padding: '0.75rem 1rem',
+                    borderRadius: 'var(--radius-md)',
+                    backgroundColor: testEmailStatus.includes('✅') ? '#edf7ee' : '#fef3c7',
+                    color: testEmailStatus.includes('✅') ? '#1e4620' : '#854d0e',
+                    border: `1px solid ${testEmailStatus.includes('✅') ? '#bbf7d0' : '#fde68a'}`,
+                    fontSize: '0.88rem',
+                    fontWeight: 600,
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}>
+                    <span>{testEmailStatus}</span>
                   </div>
                 )}
               </div>

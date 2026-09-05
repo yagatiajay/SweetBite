@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { X, Mail, Lock, User, Phone, MapPin, Sparkles, ArrowRight } from 'lucide-react';
+import { X, Mail, Lock, User, Phone, MapPin, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function AuthModal() {
-  const { isAuthModalOpen, authTab, closeAuthModal, setAuthTab, login, register } = useAuth();
+  const { isAuthModalOpen, authTab, setIsAuthModalOpen, closeAuthModal, setAuthTab, login, register } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,6 +14,14 @@ export default function AuthModal() {
   const [loading, setLoading] = useState(false);
 
   if (!isAuthModalOpen) return null;
+
+  const handleClose = () => {
+    if (typeof closeAuthModal === 'function') {
+      closeAuthModal();
+    } else if (typeof setIsAuthModalOpen === 'function') {
+      setIsAuthModalOpen(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +34,7 @@ export default function AuthModal() {
       } else {
         await register({ fullName, email, password, phone, address });
       }
-      closeAuthModal();
+      handleClose();
       setEmail('');
       setPassword('');
       setFullName('');
@@ -50,7 +58,7 @@ export default function AuthModal() {
   };
 
   return (
-    <div className="modal-overlay" onClick={closeAuthModal}>
+    <div className="modal-overlay" onClick={handleClose}>
       <div
         className="modal-content"
         onClick={(e) => e.stopPropagation()}
@@ -64,7 +72,8 @@ export default function AuthModal() {
       >
         {/* Close Button */}
         <button
-          onClick={closeAuthModal}
+          type="button"
+          onClick={handleClose}
           style={{
             position: 'absolute',
             top: '1rem',
@@ -74,7 +83,8 @@ export default function AuthModal() {
             borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            cursor: 'pointer'
           }}
           aria-label="Close"
         >
@@ -111,14 +121,14 @@ export default function AuthModal() {
           <p style={{ fontSize: '0.82rem', color: 'var(--color-cocoa-muted)', margin: 0 }}>
             {authTab === 'login'
               ? 'Access your saved orders, reward points, and treat subscriptions.'
-              : 'Create an account to track orders and receive exclusive weekend bake alerts.'}
+              : 'Create an account to track orders and receive exclusive fresh bake alerts.'}
           </p>
         </div>
 
         {/* Tab Switcher */}
         <div style={{
           display: 'flex',
-          backgroundColor: 'var(--color-canvas)',
+          backgroundColor: 'var(--color-canvas-subtle)',
           padding: '0.25rem',
           borderRadius: 'var(--radius-full)',
           marginBottom: '1.25rem',
@@ -342,7 +352,7 @@ export default function AuthModal() {
               onClick={handleFillCustomer}
               style={{
                 fontSize: '0.75rem',
-                backgroundColor: 'var(--color-canvas)',
+                backgroundColor: 'var(--color-canvas-subtle)',
                 color: 'var(--color-cocoa-primary)',
                 padding: '0.35rem 0.75rem',
                 borderRadius: 'var(--radius-full)',

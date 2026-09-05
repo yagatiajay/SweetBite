@@ -365,8 +365,8 @@ export default function BoxBuilder() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
                       {countInBox > 0 && (
                         <span style={{
-                          backgroundColor: 'var(--color-berry-soft)',
-                          color: 'var(--color-berry-rose)',
+                          backgroundColor: 'var(--color-caramel-soft)', border: '1px solid var(--color-caramel-border)',
+                          color: 'var(--color-caramel-gold)',
                           fontSize: '0.72rem',
                           fontWeight: 700,
                           padding: '0.2rem 0.45rem',

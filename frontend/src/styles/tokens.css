@@ -1,28 +1,35 @@
 :root {
-  /* Color Palette - Warm Bakery Aesthetic */
-  --color-canvas: #fff6f5;
-  --color-canvas-subtle: #fbf2ef;
+  /* Color Palette - Warm Artisan Bakery & Patisserie (Zero Pink) */
+  --color-canvas: #fcfaf7; /* Warm linen / organic artisan flour */
+  --color-canvas-subtle: #f6f1e8; /* Soft toasted oat / pastry cream */
   --color-surface: #ffffff;
-  --color-surface-hover: #faf3f0;
+  --color-surface-hover: #faf5ee;
   
-  --color-cocoa-dark: #2a1810;
-  --color-cocoa-primary: #3d2314;
-  --color-cocoa-medium: #5c3824;
-  --color-cocoa-light: #7a5038;
-  --color-cocoa-muted: #9c735d;
+  --color-cocoa-dark: #24140e; /* Deep Belgian chocolate / espresso */
+  --color-cocoa-primary: #382015; /* Rich dark cocoa */
+  --color-cocoa-medium: #5a3824; /* Warm milk chocolate */
+  --color-cocoa-light: #7c543c; /* Toasted cinnamon cocoa */
+  --color-cocoa-muted: #9c755f; /* Soft hazelnut mocha */
   
-  --color-caramel-gold: #b67c26;
-  --color-caramel-hover: #9c671b;
-  --color-caramel-soft: #f7ecd9;
+  --color-caramel-gold: #b67824; /* Golden syrup / browned caramel */
+  --color-caramel-hover: #9c6317;
+  --color-caramel-soft: #fcf2e3; /* Honey butter tint */
+  --color-caramel-border: #efdcbd;
   
-  --color-berry-rose: #d64069;
-  --color-berry-soft: #ffe6ed;
-  --color-berry-border: #f8c1cf;
+  /* Bakery Pill Tag Accent (Warm golden dough & amber) */
+  --color-tag-soft: #f7efe2;
+  --color-tag-text: #965f1a;
+  --color-tag-border: #ecdcbf;
   
-  --color-cream-border: rgba(92, 56, 36, 0.12);
-  --color-cream-border-hover: rgba(92, 56, 36, 0.25);
+  /* Discount & Promotional Offer Accent (Artisanal terracotta / spiced amber) */
+  --color-offer-bg: #c2410c;
+  --color-offer-soft: #ffedd5;
+  --color-offer-border: #fed7aa;
   
-  --color-tag-veg-bg: #e8f5e9;
+  --color-cream-border: rgba(90, 56, 36, 0.12);
+  --color-cream-border-hover: rgba(90, 56, 36, 0.25);
+  
+  --color-tag-veg-bg: #edf7ee;
   --color-tag-veg-text: #2e7d32;
   
   /* Typography */
@@ -31,10 +38,10 @@
   --font-script: 'Dancing Script', cursive;
 
   /* Elevations */
-  --shadow-sm: 0 4px 12px rgba(61, 35, 20, 0.05);
-  --shadow-md: 0 12px 28px -6px rgba(61, 35, 20, 0.08);
-  --shadow-lg: 0 24px 48px -12px rgba(61, 35, 20, 0.12);
-  --shadow-float: 0 20px 40px -10px rgba(61, 35, 20, 0.16);
+  --shadow-sm: 0 4px 12px rgba(45, 26, 16, 0.05);
+  --shadow-md: 0 12px 28px -6px rgba(45, 26, 16, 0.08);
+  --shadow-lg: 0 24px 48px -12px rgba(45, 26, 16, 0.12);
+  --shadow-float: 0 20px 40px -10px rgba(45, 26, 16, 0.15);
 
   /* Radii */
   --radius-sm: 8px;

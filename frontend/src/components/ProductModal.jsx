@@ -107,7 +107,7 @@ export default function ProductModal() {
 
               {hasDiscount && (
                 <span style={{
-                  backgroundColor: 'var(--color-berry-rose)',
+                  backgroundColor: 'var(--color-offer-bg)',
                   color: '#ffffff',
                   padding: '0.2rem 0.6rem',
                   borderRadius: 'var(--radius-full)',

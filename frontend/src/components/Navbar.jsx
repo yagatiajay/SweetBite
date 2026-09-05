@@ -53,13 +53,13 @@ export default function Navbar() {
     <header style={{ position: 'sticky', top: 0, zIndex: 900, width: '100%' }}>
       {/* Top Banner */}
       <div style={{
-        backgroundColor: 'var(--color-berry-soft)',
-        borderBottom: '1px solid var(--color-berry-border)',
+        backgroundColor: 'var(--color-tag-soft)',
+        borderBottom: '1px solid var(--color-tag-border)',
         padding: '0.35rem 0.75rem',
         textAlign: 'center',
         fontSize: 'clamp(0.72rem, 2vw, 0.8rem)',
         fontWeight: '600',
-        color: 'var(--color-berry-rose)',
+        color: 'var(--color-tag-text)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

@@ -81,7 +81,7 @@ export default function CartDrawer() {
         particleCount: 80,
         spread: 100,
         origin: { y: 0.5 },
-        colors: ['#b67c26', '#d64069', '#3d2314', '#ffe1db']
+        colors: ['#b67c26', '#c2410c', '#3d2314', '#faeed9']
       });
     } catch (err) {
       alert('Could not process order: ' + err.message);
@@ -166,8 +166,8 @@ export default function CartDrawer() {
                 width: '72px',
                 height: '72px',
                 borderRadius: '50%',
-                backgroundColor: 'var(--color-berry-soft)',
-                color: 'var(--color-berry-rose)',
+                backgroundColor: 'var(--color-caramel-soft)',
+                color: 'var(--color-caramel-gold)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

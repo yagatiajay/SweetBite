@@ -123,14 +123,14 @@ export default function ProductCard({ product }) {
 
             {hasDiscount && (
               <span style={{
-                backgroundColor: 'var(--color-berry-rose)',
+                backgroundColor: 'var(--color-offer-bg)',
                 color: '#ffffff',
                 padding: '0.25rem 0.65rem',
                 borderRadius: 'var(--radius-full)',
                 fontSize: '0.72rem',
                 fontWeight: 800,
                 letterSpacing: '0.02em',
-                boxShadow: '0 2px 8px rgba(214, 64, 105, 0.3)'
+                boxShadow: '0 2px 8px rgba(194, 65, 12, 0.3)'
               }}>
                 {product.discountPercent}% OFF
               </span>
